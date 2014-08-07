@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from ros_dds_cpp_dynamic_typesupport import generate_cpp
+from rosidl_typesupport_introspection_cpp import generate_cpp
 
 
 def main(argv=sys.argv[1:]):

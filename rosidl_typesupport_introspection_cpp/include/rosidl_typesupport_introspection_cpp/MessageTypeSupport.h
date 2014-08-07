@@ -1,8 +1,8 @@
 
-#ifndef __ros_dds_cpp_dynamic_typesupport__MessageTypeSupport__h__
-#define __ros_dds_cpp_dynamic_typesupport__MessageTypeSupport__h__
+#ifndef __rosidl_typesupport_introspection_cpp__MessageTypeSupport__h__
+#define __rosidl_typesupport_introspection_cpp__MessageTypeSupport__h__
 
-namespace ros_dds_cpp_dynamic_typesupport
+namespace rosidl_typesupport_introspection_cpp
 {
 
 const char * _dynamic_identifier = "dynamic";
@@ -20,6 +20,6 @@ typedef struct MessageTypeSupportMembers {
   const MessageTypeSupportMember * _members;
 } MessageTypeSupportMembers;
 
-}  // namespace ros_dds_cpp_dynamic_typesupport
+}  // namespace rosidl_typesupport_introspection_cpp
 
-#endif  // __ros_dds_cpp_dynamic_typesupport__MessageTypeSupport__h__
+#endif  // __rosidl_typesupport_introspection_cpp__MessageTypeSupport__h__

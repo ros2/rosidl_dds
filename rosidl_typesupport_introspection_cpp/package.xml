@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>ros_dds_cpp_dynamic_typesupport</name>
+  <name>rosidl_typesupport_introspection_cpp</name>
   <version>0.0.0</version>
   <description>Generate the message type support for dynamic message construction in C++.</description>
   <maintainer email="dthomas@osrfoundation.org">Dirk Thomas</maintainer>

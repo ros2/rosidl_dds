@@ -17,7 +17,7 @@
 
 #include "@(spec.base_type.pkg_name)/@(spec.base_type.type)_Struct.h"
 #include "rosidl_generator_cpp/MessageTypeSupport.h"
-#include "ros_dds_cpp_dynamic_typesupport/MessageTypeSupport.h"
+#include "rosidl_typesupport_introspection_cpp/MessageTypeSupport.h"
 
 namespace @(spec.base_type.pkg_name)
 {
@@ -25,7 +25,7 @@ namespace @(spec.base_type.pkg_name)
 namespace type_support
 {
 
-static ros_dds_cpp_dynamic_typesupport::MessageTypeSupportMember member_array[@(len(spec.fields))] = {
+static rosidl_typesupport_introspection_cpp::MessageTypeSupportMember member_array[@(len(spec.fields))] = {
 @{
 for index, field in enumerate(spec.fields):
     print('    {')
@@ -41,7 +41,7 @@ for index, field in enumerate(spec.fields):
 }@
 };
 
-static ros_dds_cpp_dynamic_typesupport::MessageTypeSupportMembers members = {
+static rosidl_typesupport_introspection_cpp::MessageTypeSupportMembers members = {
     "@(spec.base_type.pkg_name)",
     "@(spec.base_type.type)",
     @(len(spec.fields)),
@@ -49,7 +49,7 @@ static ros_dds_cpp_dynamic_typesupport::MessageTypeSupportMembers members = {
 };
 
 static rosidl_generator_cpp::MessageTypeSupportHandle handle = {
-    ros_dds_cpp_dynamic_typesupport::_dynamic_identifier,
+    rosidl_typesupport_introspection_cpp::_dynamic_identifier,
     &members
 };
 

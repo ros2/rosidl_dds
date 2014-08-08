@@ -5,7 +5,7 @@ from rosidl_parser import parse_message_file
 
 
 def generate_dds_idl(
-        pkg_name, interface_files, deps, output_dir, template_dir):
+        pkg_name, interface_files, deps, output_dir, template_dir, namespaces):
     template_file = os.path.join(template_dir, 'msg.idl.template')
     assert(os.path.exists(template_file))
 
@@ -29,7 +29,7 @@ def generate_dds_idl(
                     em.RAW_OPT: True,
                     em.BUFFERED_OPT: True,
                 },
-                globals={'spec': spec},
+                globals={'spec': spec, 'namespaces': namespaces},
             )
             interpreter.file(open(template_file))
             interpreter.shutdown()
@@ -62,7 +62,7 @@ MSG_TYPE_TO_IDL = {
 
 
 # used by the template
-def msg_type_to_idl(type_):
+def msg_type_to_idl(type_, namespaces):
     """
     Convert a message type into the DDS declaration.
 
@@ -76,7 +76,7 @@ def msg_type_to_idl(type_):
     if type_.is_primitive_type():
         idl_type = MSG_TYPE_TO_IDL[type_.type]
     else:
-        idl_type = '%s::dds_idl::%s_' % (type_.pkg_name, type_.type)
+        idl_type = '%s::%s_' % ('::'.join([type_.pkg_name] + namespaces), type_.type)
 
     if type_.is_array:
         if type_.array_size is None:

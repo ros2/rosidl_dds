@@ -15,7 +15,7 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The package name to generate interfaces for')
     parser.add_argument(
-        '--interface-files',
+        '--ros-interface-files',
         nargs='*',
         help='The ROS interface files')
     parser.add_argument(
@@ -30,14 +30,20 @@ def main(argv=sys.argv[1:]):
         '--template-dir',
         required=True,
         help='The location of the template files')
+    parser.add_argument(
+        '--namespaces',
+        nargs='*',
+        help='The namespaces between the package name and the interface '
+             'definition')
     args = parser.parse_args(argv)
 
     return generate_dds_idl(
         args.pkg_name,
-        args.interface_files,
+        args.ros_interface_files,
         args.deps,
         args.output_dir,
-        args.template_dir
+        args.template_dir,
+        args.namespaces
     )
 
 

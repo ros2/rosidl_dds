@@ -46,7 +46,7 @@ MSG_TYPE_TO_IDL = {
     'byte': 'octet',
     'char': 'char',
     'int8': 'octet',
-    'uint8': 'char',
+    'uint8': 'octet',
     'int16': 'short',
     'uint16': 'unsigned short',
     'int32': 'long',

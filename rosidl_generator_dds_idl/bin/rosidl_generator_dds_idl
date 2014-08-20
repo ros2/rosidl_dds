@@ -31,9 +31,9 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The location of the template files')
     parser.add_argument(
-        '--namespaces',
+        '--subfolders',
         nargs='*',
-        help='The namespaces between the package name and the interface '
+        help='The subfolders between the package name and the interface '
              'definition')
     args = parser.parse_args(argv)
 
@@ -43,7 +43,7 @@ def main(argv=sys.argv[1:]):
         args.deps,
         args.output_dir,
         args.template_dir,
-        args.namespaces
+        args.subfolders
     )
 
 

@@ -10,9 +10,9 @@ include(CMakeParseArguments)
 # :type IDL_FILES: list of strings
 # :param DEPENDENCY_PACKAGE_NAMES: a list of dependency package names
 # :type DEPENDENCY_PACKAGE_NAMES: list of strings
-# :param NAMESPACES: a list of sub namespaces between the package name and the
-#   interface name
-# :type NAMESPACES: optional list of strings
+# :param OUTPUT_SUBFOLDERS: a list of subfolders between the package name and
+#   the interface name
+# :type OUTPUT_SUBFOLDERS: optional list of strings
 #
 # @public
 #
@@ -20,7 +20,7 @@ macro(rosidl_generate_dds_interfaces target)
   #message(" - rosidl_generate_dds_interfaces(${target} ${ARGN})")
 
   cmake_parse_arguments(_ARG "" ""
-    "IDL_FILES;DEPENDENCY_PACKAGE_NAMES;NAMESPACES" ${ARGN})
+    "IDL_FILES;DEPENDENCY_PACKAGE_NAMES;OUTPUT_SUBFOLDERS" ${ARGN})
   if(_ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "rosidl_generate_dds_interfaces() called with "
       "unused arguments: ${_ARG_UNPARSED_ARGUMENTS}")
@@ -29,11 +29,11 @@ macro(rosidl_generate_dds_interfaces target)
   message("   - target: ${target}")
   message("   - interface files: ${_ARG_IDL_FILES}")
   message("   - dependency package names: ${_ARG_DEPENDENCY_PACKAGE_NAMES}")
-  message("   - namespaces: ${_ARG_NAMESPACES}")
+  message("   - output subfolders: ${_ARG_OUTPUT_SUBFOLDERS}")
 
   set(_output_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl/${PROJECT_NAME}")
-  foreach(_namespace ${_ARG_NAMESPACES})
-    set(_output_path "${_output_path}/${_namespace}")
+  foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
+    set(_output_path "${_output_path}/${_subfolder}")
   endforeach()
   set(_generated_files "")
   foreach(_idl_file ${_ARG_IDL_FILES})
@@ -63,7 +63,7 @@ macro(rosidl_generate_dds_interfaces target)
     --deps ${_dependencies}
     --output-dir ${_output_path}
     --template-dir ${rosidl_generator_dds_idl_TEMPLATE_DIR}
-    --namespaces ${_ARG_NAMESPACES}
+    --subfolders ${_ARG_OUTPUT_SUBFOLDERS}
     DEPENDS
     ${rosidl_generator_dds_idl_BIN}
     ${rosidl_generator_dds_idl_DIR}/../../../${PYTHON_INSTALL_DIR}/rosidl_generator_dds_idl/__init__.py
@@ -81,8 +81,8 @@ macro(rosidl_generate_dds_interfaces target)
   )
 
   set(_destination "share/${PROJECT_NAME}")
-  foreach(_namespace ${_ARG_NAMESPACES})
-    set(_destination "${_destination}/${_namespace}")
+  foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
+    set(_destination "${_destination}/${_subfolder}")
   endforeach()
   install(
     FILES ${_generated_files}

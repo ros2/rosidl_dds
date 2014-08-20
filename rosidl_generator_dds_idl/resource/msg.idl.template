@@ -10,9 +10,9 @@
 @# Context:
 @#  - spec (rosidl_parser.MessageSpecification)
 @#    Parsed specification of the .msg file
-@#  - namespaces (list of string)
-@#    The sub namespace under the package name
-@#    namespace in which the type gets defined
+@#  - subfolders (list of string)
+@#    The subfolder under the package name
+@#    in which the type gets defined
 @###############################################
 
 @{
@@ -33,7 +33,7 @@ for field in spec.fields:
   if not field.type.is_primitive_type():
     if field.type not in included:
       print('#include "%s/%s_.idl";' %
-          ('/'.join([field.type.pkg_name] + namespaces), field.type.type))
+          ('/'.join([field.type.pkg_name] + subfolders), field.type.type))
       included.add(field.type)
   #elif field.type in ['duration', 'time']:
   #  if not included_dcps:
@@ -49,10 +49,8 @@ for field in spec.fields:
 module @(spec.base_type.pkg_name)
 {
 
-@[for namespace in namespaces]@
-module @(namespace)
+module dds_
 {
-@[end for]
 
 @##################
 @# Define constants
@@ -65,7 +63,7 @@ module @(namespace)
 @{
 typedefs = set([])
 for field in spec.fields:
-  idl_typedef, idl_typedef_var, _ = msg_type_to_idl(field.type, namespaces)
+  idl_typedef, idl_typedef_var, _ = msg_type_to_idl(field.type)
   if idl_typedef and idl_typedef_var and (idl_typedef, idl_typedef_var) not in typedefs:
     print('%s %s__%s__%s' % (idl_typedef, spec.base_type.pkg_name, spec.base_type.type, idl_typedef_var))
     typedefs.add((idl_typedef, idl_typedef_var))
@@ -79,7 +77,7 @@ struct @(spec.base_type.type)_
 
 @[if spec.fields]@
 @[  for field in spec.fields]@
-@{    idl_typedef, idl_typedef_var, idl_type = msg_type_to_idl(field.type, namespaces)}@
+@{    idl_typedef, idl_typedef_var, idl_type = msg_type_to_idl(field.type)}@
 @[    if idl_typedef and idl_typedef_var]@
 @(      spec.base_type.pkg_name)__@(spec.base_type.type)__@(idl_type) @(field.name)_;
 @[    else]@
@@ -94,9 +92,7 @@ struct @(spec.base_type.type)_
 
 #pragma keylist @(spec.base_type.type)_
 
-@[for namespace in reversed(namespaces)]@
-};  // module @(namespace)
-@[end for]
+};  // module dds_
 
 };  // module @(spec.base_type.pkg_name)
 

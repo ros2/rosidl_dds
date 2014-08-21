@@ -80,7 +80,10 @@ def msg_type_to_idl(type_):
 
     if type_.is_array:
         if type_.array_size is None:
-            return ['', '', 'sequence<%s>' % idl_type]
+            sequence_type = idl_type
+            if type_.upper_bound is not None:
+                sequence_type = '%s, %u' % (sequence_type, type_.upper_bound)
+            return ['', '', 'sequence<%s>' % sequence_type]
         else:
             typename = '%s_array_%s' % \
                 (idl_type.replace(' ', '_'), type_.array_size)
@@ -89,5 +92,8 @@ def msg_type_to_idl(type_):
                 '%s[%s];' % (typename, type_.array_size),
                 '%s' % typename
             ]
+    elif type_.upper_bound is not None and type_.is_primitive_type() and \
+            type_.type == 'string':
+        return ['', '', '%s<%u>' % (idl_type, type_.upper_bound)]
     else:
         return ['', '', idl_type]

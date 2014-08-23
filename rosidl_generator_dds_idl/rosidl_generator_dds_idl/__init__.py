@@ -16,7 +16,8 @@ def generate_dds_idl(
 
     for idl_file in interface_files:
         spec = parse_message_file(pkg_name, idl_file)
-        generated_file = os.path.join(output_dir, '%s_.idl' % spec.base_type.type)
+        generated_file = os.path.join(output_dir,
+                                      '%s_.idl' % spec.base_type.type)
         print('Generating: %s' % generated_file)
 
         try:
@@ -79,10 +80,10 @@ def msg_type_to_idl(type_):
         idl_type = '%s::dds_::%s_' % (type_.pkg_name, type_.type)
 
     if type_.is_array:
-        if type_.array_size is None:
+        if type_.array_size is None or type_.is_upper_bound:
             sequence_type = idl_type
-            if type_.upper_bound is not None:
-                sequence_type = '%s, %u' % (sequence_type, type_.upper_bound)
+            if type_.is_upper_bound:
+                sequence_type += ', %u' % type_.array_size
             return ['', '', 'sequence<%s>' % sequence_type]
         else:
             typename = '%s_array_%s' % \
@@ -92,8 +93,8 @@ def msg_type_to_idl(type_):
                 '%s[%s];' % (typename, type_.array_size),
                 '%s' % typename
             ]
-    elif type_.upper_bound is not None and type_.is_primitive_type() and \
-            type_.type == 'string':
-        return ['', '', '%s<%u>' % (idl_type, type_.upper_bound)]
+    elif type_.string_upper_bound is not None and \
+            type_.is_primitive_type() and type_.type == 'string':
+        return ['', '', '%s<%u>' % (idl_type, type_.string_upper_bound)]
     else:
         return ['', '', idl_type]

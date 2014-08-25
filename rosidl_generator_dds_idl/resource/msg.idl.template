@@ -16,6 +16,7 @@
 @###############################################
 
 @{
+from rosidl_generator_cpp import escape_string
 from rosidl_generator_dds_idl import msg_type_to_idl
 from rosidl_generator_dds_idl import MSG_TYPE_TO_IDL
 }@
@@ -57,7 +58,18 @@ module dds_
 @##################
 @# Constants
 @[for constant in spec.constants]@
-  const @(MSG_TYPE_TO_IDL[constant.primitive_type]) @(spec.base_type.type)__@(constant.name) = @(constant.value);
+  const @(MSG_TYPE_TO_IDL[constant.primitive_type]) @(spec.base_type.type)__@(constant.name) =
+@[if constant.primitive_type == 'bool']@
+    @('TRUE' if constant.value else 'FALSE');
+@[elif constant.primitive_type == 'char']@
+    '\@(constant.value)';
+@[elif constant.primitive_type == 'int8']@
+    @(constant.value if constant.value >= 0 else (constant.value + 256));
+@[elif constant.primitive_type == 'string']@
+    "@(escape_string(constant.value))";
+@[else]@
+    @(constant.value);
+@[end if]@
 @[end for]
 
 @{

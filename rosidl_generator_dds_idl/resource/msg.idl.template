@@ -13,11 +13,12 @@
 @#  - subfolders (list of string)
 @#    The subfolder under the package name
 @#    in which the type gets defined
+@#  - get_include_directives (function)
+@#  - msg_type_to_idl (function)
 @###############################################
 
 @{
 from rosidl_generator_cpp import escape_string
-from rosidl_generator_dds_idl import msg_type_to_idl
 from rosidl_generator_dds_idl import MSG_TYPE_TO_IDL
 }@
 
@@ -27,25 +28,9 @@ from rosidl_generator_dds_idl import MSG_TYPE_TO_IDL
 @#############################
 @# Include dependency messages
 @#############################
-@{
-included = set([])
-#included_dcps = False
-for field in spec.fields:
-  if not field.type.is_primitive_type():
-    if field.type not in included:
-      print('#include "%s/%s_.idl";' %
-          ('/'.join([field.type.pkg_name] + subfolders), field.type.type))
-      included.add(field.type)
-  #elif field.type in ['duration', 'time']:
-  #  if not included_dcps:
-  #    print('#ifndef OSPL_IDL_COMPILER')
-  #    print('#include <dds_dcps.idl>')
-  #    print('#endif')
-  #    print('#ifdef COREDX_DDL_COMPILER')
-  #    print('#include "dds.ddl"')
-  #    print('#endif')
-  #    included_dcps = True
-}@
+@[for line in get_include_directives(spec, subfolders)]@
+@(line)
+@[end for]@
 
 module @(spec.base_type.pkg_name)
 {

@@ -13,13 +13,15 @@ include(CMakeParseArguments)
 # :param OUTPUT_SUBFOLDERS: a list of subfolders between the package name and
 #   the interface name
 # :type OUTPUT_SUBFOLDERS: optional list of strings
+# :param EXTENSION: a Python module extending the generator
+# :type EXTENSION: optional string
 #
 # @public
 #
 macro(rosidl_generate_dds_interfaces target)
   #message(" - rosidl_generate_dds_interfaces(${target} ${ARGN})")
 
-  cmake_parse_arguments(_ARG "" ""
+  cmake_parse_arguments(_ARG "" "EXTENSION"
     "IDL_FILES;DEPENDENCY_PACKAGE_NAMES;OUTPUT_SUBFOLDERS" ${ARGN})
   if(_ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "rosidl_generate_dds_interfaces() called with "
@@ -64,6 +66,7 @@ macro(rosidl_generate_dds_interfaces target)
     --output-dir ${_output_path}
     --template-dir ${rosidl_generator_dds_idl_TEMPLATE_DIR}
     --subfolders ${_ARG_OUTPUT_SUBFOLDERS}
+    --extension ${_ARG_EXTENSION}
     DEPENDS
     ${rosidl_generator_dds_idl_BIN}
     ${rosidl_generator_dds_idl_DIR}/../../../${PYTHON_INSTALL_DIR}/rosidl_generator_dds_idl/__init__.py

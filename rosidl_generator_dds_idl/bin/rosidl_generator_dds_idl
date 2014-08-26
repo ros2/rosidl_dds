@@ -35,6 +35,10 @@ def main(argv=sys.argv[1:]):
         nargs='*',
         help='The subfolders between the package name and the interface '
              'definition')
+    parser.add_argument(
+        '--extension',
+        nargs='?',
+        help='The Python module extending the generator')
     args = parser.parse_args(argv)
 
     return generate_dds_idl(
@@ -43,7 +47,8 @@ def main(argv=sys.argv[1:]):
         args.deps,
         args.output_dir,
         args.template_dir,
-        args.subfolders
+        args.subfolders,
+        args.extension
     )
 
 

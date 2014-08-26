@@ -5,7 +5,8 @@ from rosidl_parser import parse_message_file
 
 
 def generate_dds_idl(
-        pkg_name, interface_files, deps, output_dir, template_dir, subfolders):
+        pkg_name, interface_files, deps, output_dir, template_dir, subfolders,
+        extension_module_name):
     template_file = os.path.join(template_dir, 'msg.idl.template')
     assert(os.path.exists(template_file))
 
@@ -13,6 +14,21 @@ def generate_dds_idl(
         os.makedirs(output_dir)
     except FileExistsError:
         pass
+
+    # look for extensions for the default functions
+    functions = {
+        'get_include_directives': get_include_directives,
+        'msg_type_to_idl': msg_type_to_idl,
+    }
+    if extension_module_name is not None:
+        pkg = __import__(extension_module_name)
+        module_name = extension_module_name.rsplit('.', 1)[1]
+        if hasattr(pkg, module_name):
+            module = getattr(pkg, module_name)
+            for function_name in functions.keys():
+                if hasattr(module, function_name):
+                    functions[function_name] = \
+                        getattr(module, function_name)
 
     for idl_file in interface_files:
         spec = parse_message_file(pkg_name, idl_file)
@@ -23,6 +39,8 @@ def generate_dds_idl(
         try:
             # TODO only touch generated file if its content actually changes
             ofile = open(generated_file, 'w')
+            data = {'spec': spec, 'subfolders': subfolders}
+            data.update(functions)
             # TODO reuse interpreter
             interpreter = em.Interpreter(
                 output=ofile,
@@ -30,7 +48,7 @@ def generate_dds_idl(
                     em.RAW_OPT: True,
                     em.BUFFERED_OPT: True,
                 },
-                globals={'spec': spec, 'subfolders': subfolders},
+                globals=data,
             )
             interpreter.file(open(template_file))
             interpreter.shutdown()
@@ -57,9 +75,19 @@ MSG_TYPE_TO_IDL = {
     'float32': 'float',
     'float64': 'double',
     'string': 'string',
-    #'time': 'DDS::Time_t',
-    #'duration': 'DDS::Duration_t'
 }
+
+
+# used by the template
+def get_include_directives(spec, subfolders):
+    include_directives = set([])
+    for field in spec.fields:
+        if field.type.is_primitive_type():
+            continue
+        include_directive = '#include "%s/%s_.idl";' % \
+            ('/'.join([field.type.pkg_name] + subfolders), field.type.type)
+        include_directives.add(include_directive)
+    return sorted(include_directives)
 
 
 # used by the template
@@ -73,12 +101,14 @@ def msg_type_to_idl(type_):
     @param type: The message type
     @type type: rosidl_parser.Type
     """
-    idl_type = None
     if type_.is_primitive_type():
         idl_type = MSG_TYPE_TO_IDL[type_.type]
     else:
         idl_type = '%s::dds_::%s_' % (type_.pkg_name, type_.type)
+    return _msg_type_to_idl(type_, idl_type)
 
+
+def _msg_type_to_idl(type_, idl_type):
     if type_.is_array:
         if type_.array_size is None or type_.is_upper_bound:
             sequence_type = idl_type

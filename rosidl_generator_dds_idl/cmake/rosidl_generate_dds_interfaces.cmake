@@ -70,7 +70,7 @@ macro(rosidl_generate_dds_interfaces target)
     --extension ${_ARG_EXTENSION}
     DEPENDS
     ${rosidl_generator_dds_idl_BIN}
-    ${rosidl_generator_dds_idl_DIR}/../../../${PYTHON_INSTALL_DIR}/rosidl_generator_dds_idl/__init__.py
+    ${rosidl_generator_dds_idl_GENERATOR_FILES}
     ${rosidl_generator_dds_idl_TEMPLATE_DIR}/msg.idl.template
     ${_ARG_IDL_FILES}
     ${_dependency_files}

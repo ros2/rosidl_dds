@@ -8,7 +8,7 @@ find_package(ament_cmake_python REQUIRED)
 ament_python_install_package(${PROJECT_NAME})
 
 ament_package(
-  CONFIG_EXTRAS "rosidl_generator_dds_idl-extras.cmake"
+  CONFIG_EXTRAS "rosidl_generator_dds_idl-extras.cmake.in"
 )
 
 install(

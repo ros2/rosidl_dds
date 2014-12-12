@@ -31,30 +31,32 @@ def generate_dds_idl(
                         getattr(module, function_name)
 
     for idl_file in interface_files:
-        spec = parse_message_file(pkg_name, idl_file)
-        generated_file = os.path.join(output_dir,
-                                      '%s_.idl' % spec.base_type.type)
-        print('Generating: %s' % generated_file)
-
-        try:
-            # TODO only touch generated file if its content actually changes
-            ofile = open(generated_file, 'w')
-            data = {'spec': spec, 'subfolders': subfolders}
-            data.update(functions)
-            # TODO reuse interpreter
-            interpreter = em.Interpreter(
-                output=ofile,
-                options={
-                    em.RAW_OPT: True,
-                    em.BUFFERED_OPT: True,
-                },
-                globals=data,
-            )
-            interpreter.file(open(template_file))
-            interpreter.shutdown()
-        except Exception:
-            os.remove(generated_file)
-            raise
+        filename, extension = os.path.splitext(idl_file)
+        if extension == '.msg':
+            spec = parse_message_file(pkg_name, idl_file)
+            generated_file = os.path.join(output_dir,
+                                          '%s_.idl' % spec.base_type.type)
+            print('Generating: %s' % generated_file)
+         
+            try:
+                # TODO only touch generated file if its content actually changes
+                ofile = open(generated_file, 'w')
+                data = {'spec': spec, 'subfolders': subfolders}
+                data.update(functions)
+                # TODO reuse interpreter
+                interpreter = em.Interpreter(
+                    output=ofile,
+                    options={
+                        em.RAW_OPT: True,
+                        em.BUFFERED_OPT: True,
+                    },
+                    globals=data,
+                )
+                interpreter.file(open(template_file))
+                interpreter.shutdown()
+            except Exception:
+                os.remove(generated_file)
+                raise
 
     return 0
 

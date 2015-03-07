@@ -37,7 +37,7 @@ def generate_dds_idl(
             generated_file = os.path.join(output_dir,
                                           '%s_.idl' % spec.base_type.type)
             print('Generating: %s' % generated_file)
-         
+
             try:
                 # TODO only touch generated file if its content actually changes
                 ofile = open(generated_file, 'w')

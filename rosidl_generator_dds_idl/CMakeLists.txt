@@ -7,6 +7,11 @@ find_package(ament_cmake_python REQUIRED)
 
 ament_python_install_package(${PROJECT_NAME})
 
+if(AMENT_ENABLE_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
 ament_package(
   CONFIG_EXTRAS "rosidl_generator_dds_idl-extras.cmake.in"
 )

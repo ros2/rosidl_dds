@@ -86,7 +86,7 @@ def get_include_directives(spec, subfolders):
     for field in spec.fields:
         if field.type.is_primitive_type():
             continue
-        include_directive = '#include "%s/%s_.idl";' % \
+        include_directive = '#include "%s/%s_.idl"' % \
             ('/'.join([field.type.pkg_name] + subfolders), field.type.type)
         include_directives.add(include_directive)
     return sorted(include_directives)

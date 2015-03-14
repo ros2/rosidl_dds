@@ -1,14 +1,17 @@
 import em
 import os
 
-from rosidl_parser import parse_message_file
+from rosidl_parser import parse_message_file, parse_service_file, Field, MessageSpecification, Type
 
 
 def generate_dds_idl(
         pkg_name, interface_files, deps, output_dir, template_dir, subfolders,
         extension_module_name):
-    template_file = os.path.join(template_dir, 'msg.idl.template')
-    assert(os.path.exists(template_file))
+    template_file_msg = os.path.join(template_dir, 'msg.idl.template')
+    assert(os.path.exists(template_file_msg))
+
+    template_file_srv = os.path.join(template_dir, 'srv.idl.template')
+    assert(os.path.exists(template_file_srv))
 
     try:
         os.makedirs(output_dir)
@@ -36,7 +39,7 @@ def generate_dds_idl(
             spec = parse_message_file(pkg_name, idl_file)
             generated_file = os.path.join(output_dir,
                                           '%s_.idl' % spec.base_type.type)
-            print('Generating: %s' % generated_file)
+            print('Generating MESSAGE: %s' % generated_file)
 
             try:
                 # TODO only touch generated file if its content actually changes
@@ -52,11 +55,76 @@ def generate_dds_idl(
                     },
                     globals=data,
                 )
-                interpreter.file(open(template_file))
+                interpreter.file(open(template_file_msg))
                 interpreter.shutdown()
             except Exception:
                 os.remove(generated_file)
                 raise
+        elif extension == '.srv':
+            srv_spec = parse_service_file(pkg_name, idl_file)
+            default_value_string = None
+            request_fields = [
+                Field(
+                    Type('int64', context_package_name=pkg_name),
+                    'sequence_id', default_value_string),
+                Field(
+                    Type('%sRequest' % srv_spec.srv_name, context_package_name=pkg_name),
+                    'request', default_value_string)
+                ]
+            response_fields = [
+                Field(
+                    Type('int64', context_package_name=pkg_name),
+                    'sequence_id', default_value_string),
+                Field(
+                    Type('%sResponse' % srv_spec.srv_name, context_package_name=pkg_name),
+                    'response', default_value_string)
+                ]
+            constants = []
+            sample_spec_request = MessageSpecification(
+                srv_spec.pkg_name, 'Sample%sRequest' % srv_spec.srv_name, request_fields, constants)
+            write_sample_spec_request = MessageSpecification(
+                srv_spec.pkg_name, 'WriteSample%sRequest' % srv_spec.srv_name, request_fields,
+                constants)
+
+            sample_spec_response = MessageSpecification(
+                srv_spec.pkg_name, 'Sample%sResponse' % srv_spec.srv_name, response_fields, constants)
+            write_sample_spec_response = MessageSpecification(
+                srv_spec.pkg_name, 'WriteSample%sResponse' % srv_spec.srv_name, response_fields,
+                constants)
+
+            generated_files = [
+                (sample_spec_request,
+                 os.path.join(output_dir, '%s_.idl' % sample_spec_request.base_type.type)),
+                (sample_spec_response,
+                 os.path.join(output_dir, '%s_.idl' % sample_spec_response.base_type.type)),
+                (write_sample_spec_request,
+                 os.path.join(output_dir, '%s_.idl' % write_sample_spec_request.base_type.type)),
+                (write_sample_spec_response,
+                 os.path.join(output_dir, '%s_.idl' % write_sample_spec_response.base_type.type)),
+            ]
+
+            for spec, generated_file in generated_files:
+                print('Generating SERVICE supporting file: %s' % generated_file)
+
+                try:
+                    # TODO only touch generated file if its content actually changes
+                    ofile = open(generated_file, 'w')
+                    data = {'spec': spec, 'subfolders': subfolders}
+                    data.update(functions)
+                    # TODO reuse interpreter
+                    interpreter = em.Interpreter(
+                        output=ofile,
+                        options={
+                            em.RAW_OPT: True,
+                            em.BUFFERED_OPT: True,
+                        },
+                        globals=data,
+                    )
+                    interpreter.file(open(template_file_srv))
+                    interpreter.shutdown()
+                except Exception:
+                    os.remove(generated_file)
+                    raise
 
     return 0
 

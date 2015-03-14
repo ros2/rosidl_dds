@@ -43,6 +43,12 @@ macro(rosidl_generate_dds_interfaces target)
     if("${_extension}" STREQUAL ".msg")
       get_filename_component(name "${_idl_file}" NAME_WE)
       list(APPEND _generated_files "${_output_path}/${name}_.idl")
+    elseif("${_extension}" STREQUAL ".srv")
+      get_filename_component(name "${_idl_file}" NAME_WE)
+      list(APPEND _generated_files "${_output_path}/Sample${name}Request_.idl")
+      list(APPEND _generated_files "${_output_path}/Sample${name}Response_.idl")
+      list(APPEND _generated_files "${_output_path}/WriteSample${name}Request_.idl")
+      list(APPEND _generated_files "${_output_path}/WriteSample${name}Response_.idl")
     endif()
   endforeach()
 
@@ -75,6 +81,7 @@ macro(rosidl_generate_dds_interfaces target)
     ${rosidl_generator_dds_idl_BIN}
     ${rosidl_generator_dds_idl_GENERATOR_FILES}
     ${rosidl_generator_dds_idl_TEMPLATE_DIR}/msg.idl.template
+    ${rosidl_generator_dds_idl_TEMPLATE_DIR}/srv.idl.template
     ${_ARG_IDL_FILES}
     ${_dependency_files}
     COMMENT "Generating DDS interfaces"

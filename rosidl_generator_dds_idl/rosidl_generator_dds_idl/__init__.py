@@ -1,7 +1,11 @@
 import em
 import os
 
-from rosidl_parser import parse_message_file, parse_service_file, Field, MessageSpecification, Type
+from rosidl_parser import Field
+from rosidl_parser import MessageSpecification
+from rosidl_parser import Type
+from rosidl_parser import parse_message_file
+from rosidl_parser import parse_service_file
 
 
 def generate_dds_idl(

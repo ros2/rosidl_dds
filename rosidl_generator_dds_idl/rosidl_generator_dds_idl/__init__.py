@@ -43,7 +43,7 @@ def generate_dds_idl(
             spec = parse_message_file(pkg_name, idl_file)
             generated_file = os.path.join(output_dir,
                                           '%s_.idl' % spec.base_type.type)
-            print('Generating MESSAGE: %s' % generated_file)
+            print('Generating message: %s' % generated_file)
 
             try:
                 # TODO only touch generated file if its content actually changes
@@ -108,7 +108,7 @@ def generate_dds_idl(
             ]
 
             for spec, generated_file in generated_files:
-                print('Generating SERVICE supporting file: %s' % generated_file)
+                print('Generating service: %s' % generated_file)
 
                 try:
                     # TODO only touch generated file if its content actually changes

@@ -66,22 +66,21 @@ def generate_dds_idl(
                 raise
         elif extension == '.srv':
             srv_spec = parse_service_file(pkg_name, idl_file)
-            default_value_string = None
             request_fields = [
                 Field(
                     Type('int64', context_package_name=pkg_name),
-                    'sequence_id', default_value_string),
+                    'sequence_id', default_value_string=None),
                 Field(
                     Type('%sRequest' % srv_spec.srv_name, context_package_name=pkg_name),
-                    'request', default_value_string)
+                    'request', default_value_string=None)
                 ]
             response_fields = [
                 Field(
                     Type('int64', context_package_name=pkg_name),
-                    'sequence_id', default_value_string),
+                    'sequence_id', default_value_string=None),
                 Field(
                     Type('%sResponse' % srv_spec.srv_name, context_package_name=pkg_name),
-                    'response', default_value_string)
+                    'response', default_value_string=None)
                 ]
             constants = []
             sample_spec_request = MessageSpecification(

@@ -68,6 +68,9 @@ def generate_dds_idl(
             srv_spec = parse_service_file(pkg_name, idl_file)
             request_fields = [
                 Field(
+                    Type('byte[16]', context_package_name=pkg_name),
+                    'client_guid', default_value_string=None),
+                Field(
                     Type('int64', context_package_name=pkg_name),
                     'sequence_id', default_value_string=None),
                 Field(
@@ -75,6 +78,9 @@ def generate_dds_idl(
                     'request', default_value_string=None)
                 ]
             response_fields = [
+                Field(
+                    Type('byte[16]', context_package_name=pkg_name),
+                    'client_guid', default_value_string=None),
                 Field(
                     Type('int64', context_package_name=pkg_name),
                     'sequence_id', default_value_string=None),

@@ -14,9 +14,6 @@ def generate_dds_idl(
     template_file_msg = os.path.join(template_dir, 'msg.idl.template')
     assert(os.path.exists(template_file_msg))
 
-    template_file_srv = os.path.join(template_dir, 'srv.idl.template')
-    assert(os.path.exists(template_file_srv))
-
     try:
         os.makedirs(output_dir)
     except FileExistsError:
@@ -129,7 +126,7 @@ def generate_dds_idl(
                         },
                         globals=data,
                     )
-                    interpreter.file(open(template_file_srv))
+                    interpreter.file(open(template_file_msg))
                     interpreter.shutdown()
                 except Exception:
                     os.remove(generated_file)

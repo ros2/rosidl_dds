@@ -65,22 +65,28 @@ def generate_dds_idl(
             srv_spec = parse_service_file(pkg_name, idl_file)
             request_fields = [
                 Field(
-                    Type('byte[16]', context_package_name=pkg_name),
-                    'client_guid', default_value_string=None),
+                    Type('uint64', context_package_name=pkg_name),
+                    'client_guid_0', default_value_string=None),
+                Field(
+                    Type('uint64', context_package_name=pkg_name),
+                    'client_guid_1', default_value_string=None),
                 Field(
                     Type('int64', context_package_name=pkg_name),
-                    'sequence_id', default_value_string=None),
+                    'sequence_number', default_value_string=None),
                 Field(
                     Type('%sRequest' % srv_spec.srv_name, context_package_name=pkg_name),
                     'request', default_value_string=None)
                 ]
             response_fields = [
                 Field(
-                    Type('byte[16]', context_package_name=pkg_name),
-                    'client_guid', default_value_string=None),
+                    Type('uint64', context_package_name=pkg_name),
+                    'client_guid_0', default_value_string=None),
+                Field(
+                    Type('uint64', context_package_name=pkg_name),
+                    'client_guid_1', default_value_string=None),
                 Field(
                     Type('int64', context_package_name=pkg_name),
-                    'sequence_id', default_value_string=None),
+                    'sequence_number', default_value_string=None),
                 Field(
                     Type('%sResponse' % srv_spec.srv_name, context_package_name=pkg_name),
                     'response', default_value_string=None)

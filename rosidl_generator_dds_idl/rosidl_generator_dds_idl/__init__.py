@@ -76,7 +76,7 @@ def generate_dds_idl(
                 Field(
                     Type('%sRequest' % srv_spec.srv_name, context_package_name=pkg_name),
                     'request', default_value_string=None)
-                ]
+            ]
             response_fields = [
                 Field(
                     Type('uint64', context_package_name=pkg_name),
@@ -90,16 +90,18 @@ def generate_dds_idl(
                 Field(
                     Type('%sResponse' % srv_spec.srv_name, context_package_name=pkg_name),
                     'response', default_value_string=None)
-                ]
+            ]
             constants = []
             sample_spec_request = MessageSpecification(
-                srv_spec.pkg_name, 'Sample%sRequest' % srv_spec.srv_name, request_fields, constants)
+                srv_spec.pkg_name, 'Sample%sRequest' % srv_spec.srv_name, request_fields,
+                constants)
             write_sample_spec_request = MessageSpecification(
                 srv_spec.pkg_name, 'WriteSample%sRequest' % srv_spec.srv_name, request_fields,
                 constants)
 
             sample_spec_response = MessageSpecification(
-                srv_spec.pkg_name, 'Sample%sResponse' % srv_spec.srv_name, response_fields, constants)
+                srv_spec.pkg_name, 'Sample%sResponse' % srv_spec.srv_name, response_fields,
+                constants)
             write_sample_spec_response = MessageSpecification(
                 srv_spec.pkg_name, 'WriteSample%sResponse' % srv_spec.srv_name, response_fields,
                 constants)

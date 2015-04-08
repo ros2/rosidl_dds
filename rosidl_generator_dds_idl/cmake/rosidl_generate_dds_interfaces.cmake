@@ -33,19 +33,12 @@ include(CMakeParseArguments)
 # @public
 #
 macro(rosidl_generate_dds_interfaces target)
-  #message(" - rosidl_generate_dds_interfaces(${target} ${ARGN})")
-
   cmake_parse_arguments(_ARG "" "EXTENSION"
     "IDL_FILES;DEPENDENCY_PACKAGE_NAMES;OUTPUT_SUBFOLDERS" ${ARGN})
   if(_ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "rosidl_generate_dds_interfaces() called with "
       "unused arguments: ${_ARG_UNPARSED_ARGUMENTS}")
   endif()
-
-  message("   - target: ${target}")
-  message("   - interface files: ${_ARG_IDL_FILES}")
-  message("   - dependency package names: ${_ARG_DEPENDENCY_PACKAGE_NAMES}")
-  message("   - output subfolders: ${_ARG_OUTPUT_SUBFOLDERS}")
 
   set(_output_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl/${PROJECT_NAME}")
   foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
@@ -75,9 +68,6 @@ macro(rosidl_generate_dds_interfaces target)
       list(APPEND _dependencies "${_pkg_name}:${_abs_idl_file}")
     endforeach()
   endforeach()
-
-  message("   - generated files: ${_generated_files}")
-  message("   - dependencies: ${_dependencies}")
 
   # TODO either pass space separated argument lists or split them in Python
   add_custom_command(

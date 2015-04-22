@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import em
+from io import StringIO
 import os
 
 from rosidl_parser import Field
@@ -56,13 +57,12 @@ def generate_dds_idl(
                                           '%s_.idl' % spec.base_type.type)
 
             try:
-                # TODO only touch generated file if its content actually changes
-                ofile = open(generated_file, 'w')
+                output = StringIO()
                 data = {'spec': spec, 'subfolders': subfolders}
                 data.update(functions)
                 # TODO reuse interpreter
                 interpreter = em.Interpreter(
-                    output=ofile,
+                    output=output,
                     options={
                         em.RAW_OPT: True,
                         em.BUFFERED_OPT: True,
@@ -70,10 +70,19 @@ def generate_dds_idl(
                     globals=data,
                 )
                 interpreter.file(open(template_file_msg))
+                content = output.getvalue()
                 interpreter.shutdown()
             except Exception:
                 os.remove(generated_file)
                 raise
+
+            # only overwrite file if necessary
+            if os.path.exists(generated_file):
+                with open(generated_file, 'r') as h:
+                    if h.read() == content:
+                        continue
+            with open(generated_file, 'w') as h:
+                h.write(content)
 
         elif extension == '.srv':
             srv_spec = parse_service_file(pkg_name, idl_file)
@@ -134,13 +143,12 @@ def generate_dds_idl(
             for spec, generated_file in generated_files:
 
                 try:
-                    # TODO only touch generated file if its content actually changes
-                    ofile = open(generated_file, 'w')
+                    output = StringIO()
                     data = {'spec': spec, 'subfolders': subfolders}
                     data.update(functions)
                     # TODO reuse interpreter
                     interpreter = em.Interpreter(
-                        output=ofile,
+                        output=output,
                         options={
                             em.RAW_OPT: True,
                             em.BUFFERED_OPT: True,
@@ -148,10 +156,19 @@ def generate_dds_idl(
                         globals=data,
                     )
                     interpreter.file(open(template_file_msg))
+                    content = output.getvalue()
                     interpreter.shutdown()
                 except Exception:
                     os.remove(generated_file)
                     raise
+
+                # only overwrite file if necessary
+                if os.path.exists(generated_file):
+                    with open(generated_file, 'r') as h:
+                        if h.read() == content:
+                            continue
+                with open(generated_file, 'w') as h:
+                    h.write(content)
 
     return 0
 

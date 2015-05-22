@@ -37,6 +37,7 @@ def generate_dds_idl(
     # look for extensions for the default functions
     functions = {
         'get_include_directives': get_include_directives,
+        'get_post_struct_lines': get_post_struct_lines,
         'msg_type_to_idl': msg_type_to_idl,
     }
     if extension_module_name is not None:
@@ -202,6 +203,11 @@ def get_include_directives(spec, subfolders):
             ('/'.join([field.type.pkg_name] + subfolders), field.type.type)
         include_directives.add(include_directive)
     return sorted(include_directives)
+
+
+# used by the template
+def get_post_struct_lines(spec):
+    return []
 
 
 # used by the template

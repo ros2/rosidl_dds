@@ -87,7 +87,9 @@ struct @(spec.base_type.type)_
 
 };  // struct @(spec.base_type.type)_
 
-#pragma keylist @(spec.base_type.type)_
+@[for line in get_post_struct_lines(spec)]@
+@(line)
+@[end for]@
 
 };  // module dds_
 

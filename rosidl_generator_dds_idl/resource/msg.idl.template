@@ -1,3 +1,5 @@
+// generated from rosidl_generator_dds_idl/resource/msg.idl.template
+
 @###############################################
 @#
 @# ROS interface to DDS interface converter
@@ -10,29 +12,41 @@
 @# Context:
 @#  - spec (rosidl_parser.MessageSpecification)
 @#    Parsed specification of the .msg file
+@#  - subfolder (string)
+@#    The subfolder / subnamespace of the message
+@#    Either 'msg' or 'srv'
 @#  - subfolders (list of string)
-@#    The subfolder under the package name
-@#    in which the type gets defined
+@#    The subfolders under the package name
+@#    in which the type gets defined which are not part of the namespace
 @#  - get_include_directives (function)
 @#  - msg_type_to_idl (function)
 @###############################################
-
+@
 @{
 from rosidl_generator_cpp import escape_string
 from rosidl_generator_dds_idl import MSG_TYPE_TO_IDL
 }@
-
-#ifndef __@(spec.base_type.pkg_name)__@(spec.base_type.type)__h__
-#define __@(spec.base_type.pkg_name)__@(spec.base_type.type)__h__
+@
+#ifndef __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__h__
+#define __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__h__
 
 @#############################
 @# Include dependency messages
 @#############################
-@[for line in get_include_directives(spec, subfolders)]@
+@[if spec.base_type.type.startswith('Sample_')]
+@[for line in get_include_directives(spec, ['srv'] + subfolders)]@
 @(line)
 @[end for]@
+@[else]@
+@[for line in get_include_directives(spec, ['msg'] + subfolders)]@
+@(line)
+@[end for]@
+@[end if]@
 
 module @(spec.base_type.pkg_name)
+{
+
+module @(subfolder)
 {
 
 module dds_
@@ -93,6 +107,8 @@ struct @(spec.base_type.type)_
 
 };  // module dds_
 
+};  // module @(subfolder)
+
 };  // module @(spec.base_type.pkg_name)
 
-#endif  // __@(spec.base_type.pkg_name)__@(spec.base_type.type)__h__
+#endif  // __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__h__

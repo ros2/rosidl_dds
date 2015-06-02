@@ -29,11 +29,6 @@ def generate_dds_idl(
     template_file_msg = os.path.join(template_dir, 'msg.idl.template')
     assert(os.path.exists(template_file_msg))
 
-    try:
-        os.makedirs(output_dir)
-    except FileExistsError:
-        pass
-
     # look for extensions for the default functions
     functions = {
         'get_include_directives': get_include_directives,
@@ -51,15 +46,18 @@ def generate_dds_idl(
                         getattr(module, function_name)
 
     for idl_file in interface_files:
-        filename, extension = os.path.splitext(idl_file)
+        subfolder = os.path.basename(os.path.dirname(idl_file))
+        extension = os.path.splitext(idl_file)[1]
+        output_path = os.path.join(output_dir, subfolder)
+        for sub in subfolders:
+            output_path = os.path.join(output_path, sub)
         if extension == '.msg':
             spec = parse_message_file(pkg_name, idl_file)
-            generated_file = os.path.join(output_dir,
-                                          '%s_.idl' % spec.base_type.type)
+            generated_file = os.path.join(output_path, '%s_.idl' % spec.base_type.type)
 
             try:
                 output = StringIO()
-                data = {'spec': spec, 'subfolders': subfolders}
+                data = {'spec': spec, 'subfolder': subfolder, 'subfolders': subfolders}
                 data.update(functions)
                 # TODO reuse interpreter
                 interpreter = em.Interpreter(
@@ -74,7 +72,8 @@ def generate_dds_idl(
                 content = output.getvalue()
                 interpreter.shutdown()
             except Exception:
-                os.remove(generated_file)
+                if os.path.exists(generated_file):
+                    os.remove(generated_file)
                 raise
 
             # only overwrite file if necessary
@@ -82,6 +81,10 @@ def generate_dds_idl(
                 with open(generated_file, 'r') as h:
                     if h.read() == content:
                         continue
+            try:
+                os.makedirs(os.path.dirname(generated_file))
+            except FileExistsError:
+                pass
             with open(generated_file, 'w') as h:
                 h.write(content)
 
@@ -98,7 +101,7 @@ def generate_dds_idl(
                     Type('int64', context_package_name=pkg_name),
                     'sequence_number', default_value_string=None),
                 Field(
-                    Type('%sRequest' % srv_spec.srv_name, context_package_name=pkg_name),
+                    Type('%s_Request' % srv_spec.srv_name, context_package_name=pkg_name),
                     'request', default_value_string=None)
             ]
             response_fields = [
@@ -112,40 +115,29 @@ def generate_dds_idl(
                     Type('int64', context_package_name=pkg_name),
                     'sequence_number', default_value_string=None),
                 Field(
-                    Type('%sResponse' % srv_spec.srv_name, context_package_name=pkg_name),
+                    Type('%s_Response' % srv_spec.srv_name, context_package_name=pkg_name),
                     'response', default_value_string=None)
             ]
             constants = []
             sample_spec_request = MessageSpecification(
-                srv_spec.pkg_name, 'Sample%sRequest' % srv_spec.srv_name, request_fields,
+                srv_spec.pkg_name, 'Sample_%s_Request' % srv_spec.srv_name, request_fields,
                 constants)
-            write_sample_spec_request = MessageSpecification(
-                srv_spec.pkg_name, 'WriteSample%sRequest' % srv_spec.srv_name, request_fields,
-                constants)
-
             sample_spec_response = MessageSpecification(
-                srv_spec.pkg_name, 'Sample%sResponse' % srv_spec.srv_name, response_fields,
-                constants)
-            write_sample_spec_response = MessageSpecification(
-                srv_spec.pkg_name, 'WriteSample%sResponse' % srv_spec.srv_name, response_fields,
+                srv_spec.pkg_name, 'Sample_%s_Response' % srv_spec.srv_name, response_fields,
                 constants)
 
             generated_files = [
-                (sample_spec_request,
-                 os.path.join(output_dir, '%s_.idl' % sample_spec_request.base_type.type)),
-                (sample_spec_response,
-                 os.path.join(output_dir, '%s_.idl' % sample_spec_response.base_type.type)),
-                (write_sample_spec_request,
-                 os.path.join(output_dir, '%s_.idl' % write_sample_spec_request.base_type.type)),
-                (write_sample_spec_response,
-                 os.path.join(output_dir, '%s_.idl' % write_sample_spec_response.base_type.type)),
+                (sample_spec_request, os.path.join(
+                    output_path, '%s_.idl' % sample_spec_request.base_type.type)),
+                (sample_spec_response, os.path.join(
+                    output_path, '%s_.idl' % sample_spec_response.base_type.type)),
             ]
 
             for spec, generated_file in generated_files:
 
                 try:
                     output = StringIO()
-                    data = {'spec': spec, 'subfolders': subfolders}
+                    data = {'spec': spec, 'subfolder': 'srv', 'subfolders': subfolders}
                     data.update(functions)
                     # TODO reuse interpreter
                     interpreter = em.Interpreter(
@@ -160,7 +152,8 @@ def generate_dds_idl(
                     content = output.getvalue()
                     interpreter.shutdown()
                 except Exception:
-                    os.remove(generated_file)
+                    if os.path.exists(generated_file):
+                        os.remove(generated_file)
                     raise
 
                 # only overwrite file if necessary
@@ -168,6 +161,10 @@ def generate_dds_idl(
                     with open(generated_file, 'r') as h:
                         if h.read() == content:
                             continue
+                try:
+                    os.makedirs(os.path.dirname(generated_file))
+                except FileExistsError:
+                    pass
                 with open(generated_file, 'w') as h:
                     h.write(content)
 
@@ -224,7 +221,10 @@ def msg_type_to_idl(type_):
     if type_.is_primitive_type():
         idl_type = MSG_TYPE_TO_IDL[type_.type]
     else:
-        idl_type = '%s::dds_::%s_' % (type_.pkg_name, type_.type)
+        if type_.type.endswith('_Request') or type_.type.endswith('_Response'):
+            idl_type = '%s::srv::dds_::%s_' % (type_.pkg_name, type_.type)
+        else:
+            idl_type = '%s::msg::dds_::%s_' % (type_.pkg_name, type_.type)
     return _msg_type_to_idl(type_, idl_type)
 
 

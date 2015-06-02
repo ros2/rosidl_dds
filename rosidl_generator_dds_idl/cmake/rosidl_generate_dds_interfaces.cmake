@@ -40,21 +40,33 @@ macro(rosidl_generate_dds_interfaces target)
       "unused arguments: ${_ARG_UNPARSED_ARGUMENTS}")
   endif()
 
-  set(_output_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl/${PROJECT_NAME}")
-  foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
-    set(_output_path "${_output_path}/${_subfolder}")
-  endforeach()
-  set(_generated_files "")
+  set(_output_basepath "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl/${PROJECT_NAME}")
+  set(_generated_msg_files "")
+  set(_generated_srv_files "")
   foreach(_idl_file ${_ARG_IDL_FILES})
     get_filename_component(_extension "${_idl_file}" EXT)
+    get_filename_component(_parent_folder "${_idl_file}" DIRECTORY)
+    get_filename_component(_parent_folder "${_parent_folder}" NAME)
+    set(_output_path "${_output_basepath}/${_parent_folder}")
+    foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
+      set(_output_path "${_output_path}/${_subfolder}")
+    endforeach()
     get_filename_component(_name "${_idl_file}" NAME_WE)
     if("${_extension}" STREQUAL ".msg")
-      list(APPEND _generated_files "${_output_path}/${_name}_.idl")
+      if("${_parent_folder} " STREQUAL "msg ")
+        list(APPEND _generated_msg_files "${_output_path}/${_name}_.idl")
+      elseif("${_parent_folder} " STREQUAL "srv ")
+        list(APPEND _generated_srv_files "${_output_path}/${_name}_.idl")
+      else()
+        message(FATAL_ERROR "Interface file with unknown parent folder: ${_idl_file}")
+      endif()
     elseif("${_extension}" STREQUAL ".srv")
-      list(APPEND _generated_files "${_output_path}/Sample${_name}Request_.idl")
-      list(APPEND _generated_files "${_output_path}/Sample${_name}Response_.idl")
-      list(APPEND _generated_files "${_output_path}/WriteSample${_name}Request_.idl")
-      list(APPEND _generated_files "${_output_path}/WriteSample${_name}Response_.idl")
+      # TODO(dirk-thomas) this is only done for opensplice
+      # and should be move to the opensplice specific generator package
+      list(APPEND _generated_srv_files "${_output_path}/Sample_${_name}_Request_.idl")
+      list(APPEND _generated_srv_files "${_output_path}/Sample_${_name}_Response_.idl")
+    else()
+      message(FATAL_ERROR "Interface file with unknown extension: ${_idl_file}")
     endif()
   endforeach()
 
@@ -71,12 +83,12 @@ macro(rosidl_generate_dds_interfaces target)
 
   # TODO either pass space separated argument lists or split them in Python
   add_custom_command(
-    OUTPUT ${_generated_files}
+    OUTPUT ${_generated_msg_files} ${_generated_srv_files}
     COMMAND ${PYTHON_EXECUTABLE} ${rosidl_generator_dds_idl_BIN}
     --pkg-name ${PROJECT_NAME}
     --ros-interface-files ${_ARG_IDL_FILES}
     --deps ${_dependencies}
-    --output-dir ${_output_path}
+    --output-dir ${_output_basepath}
     --template-dir ${rosidl_generator_dds_idl_TEMPLATE_DIR}
     --subfolders ${_ARG_OUTPUT_SUBFOLDERS}
     --extension ${_ARG_EXTENSION}
@@ -93,15 +105,25 @@ macro(rosidl_generate_dds_interfaces target)
   add_custom_target(
     ${target}
     DEPENDS
-    ${_generated_files}
+    ${_generated_msg_files} ${_generated_srv_files}
   )
 
-  set(_destination "share/${PROJECT_NAME}")
+  set(_msg_destination "share/${PROJECT_NAME}/msg")
+  set(_srv_destination "share/${PROJECT_NAME}/srv")
   foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
-    set(_destination "${_destination}/${_subfolder}")
+    set(_msg_destination "${_msg_destination}/${_subfolder}")
+    set(_srv_destination "${_srv_destination}/${_subfolder}")
   endforeach()
-  install(
-    FILES ${_generated_files}
-    DESTINATION "${_destination}"
-  )
+  if(NOT "${_generated_msg_files} " STREQUAL " ")
+    install(
+      FILES ${_generated_msg_files}
+      DESTINATION "${_msg_destination}"
+    )
+  endif()
+  if(NOT "${_generated_srv_files} " STREQUAL " ")
+    install(
+      FILES ${_generated_srv_files}
+      DESTINATION "${_srv_destination}"
+    )
+  endif()
 endmacro()

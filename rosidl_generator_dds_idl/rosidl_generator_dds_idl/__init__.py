@@ -28,7 +28,7 @@ def generate_dds_idl(
         extension_module_name):
     template_file_msg = os.path.join(template_dir, 'msg.idl.template')
     assert os.path.exists(template_file_msg), \
-      "The template '%s' does not exist" % template_file_msg
+        "The template '%s' does not exist" % template_file_msg
 
     # look for extensions for the default functions
     functions = {

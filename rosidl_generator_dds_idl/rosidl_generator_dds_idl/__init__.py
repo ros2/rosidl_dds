@@ -237,7 +237,7 @@ def _msg_type_to_idl(type_, idl_type):
             return ['', '', 'sequence<%s>' % sequence_type]
         else:
             typename = '%s_array_%s' % \
-                (idl_type.replace(' ', '_'), type_.array_size)
+                (idl_type.replace(' ', '_').replace('::', '__'), type_.array_size)
             return [
                 'typedef %s' % idl_type,
                 '%s[%s];' % (typename, type_.array_size),

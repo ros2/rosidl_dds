@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import em
-from io import StringIO
 import os
 
+from rosidl_cmake import expand_template
+from rosidl_cmake import get_newest_modification_time
+from rosidl_cmake import read_generator_arguments
 from rosidl_parser import Field
 from rosidl_parser import MessageSpecification
 from rosidl_parser import Type
@@ -23,12 +24,12 @@ from rosidl_parser import parse_message_file
 from rosidl_parser import parse_service_file
 
 
-def generate_dds_idl(
-        pkg_name, interface_files, deps, output_dir, template_dir, subfolders,
-        extension_module_name):
-    template_file_msg = os.path.join(template_dir, 'msg.idl.template')
-    assert os.path.exists(template_file_msg), \
-        "The template '%s' does not exist" % template_file_msg
+def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name):
+    args = read_generator_arguments(generator_arguments_file)
+
+    template_file = os.path.join(args['template_dir'], 'msg.idl.template')
+    assert os.path.exists(template_file), \
+        "The template '%s' does not exist" % template_file
 
     # look for extensions for the default functions
     functions = {
@@ -46,51 +47,27 @@ def generate_dds_idl(
                     functions[function_name] = \
                         getattr(module, function_name)
 
-    for idl_file in interface_files:
-        subfolder = os.path.basename(os.path.dirname(idl_file))
-        extension = os.path.splitext(idl_file)[1]
-        output_path = os.path.join(output_dir, subfolder)
+    pkg_name = args['package_name']
+    latest_target_timestamp = get_newest_modification_time(args['target_dependencies'])
+
+    for ros_interface_file in args['ros_interface_files']:
+        subfolder = os.path.basename(os.path.dirname(ros_interface_file))
+        extension = os.path.splitext(ros_interface_file)[1]
+        output_path = os.path.join(args['output_dir'], subfolder)
         for sub in subfolders:
             output_path = os.path.join(output_path, sub)
         if extension == '.msg':
-            spec = parse_message_file(pkg_name, idl_file)
+            spec = parse_message_file(pkg_name, ros_interface_file)
             generated_file = os.path.join(output_path, '%s_.idl' % spec.base_type.type)
 
-            try:
-                output = StringIO()
-                data = {'spec': spec, 'subfolder': subfolder, 'subfolders': subfolders}
-                data.update(functions)
-                # TODO reuse interpreter
-                interpreter = em.Interpreter(
-                    output=output,
-                    options={
-                        em.RAW_OPT: True,
-                        em.BUFFERED_OPT: True,
-                    },
-                    globals=data,
-                )
-                interpreter.file(open(template_file_msg))
-                content = output.getvalue()
-                interpreter.shutdown()
-            except Exception:
-                if os.path.exists(generated_file):
-                    os.remove(generated_file)
-                raise
-
-            # only overwrite file if necessary
-            if os.path.exists(generated_file):
-                with open(generated_file, 'r') as h:
-                    if h.read() == content:
-                        continue
-            try:
-                os.makedirs(os.path.dirname(generated_file))
-            except FileExistsError:
-                pass
-            with open(generated_file, 'w') as h:
-                h.write(content)
+            data = {'spec': spec, 'subfolder': subfolder, 'subfolders': subfolders}
+            data.update(functions)
+            expand_template(
+                template_file, data, generated_file,
+                minimum_timestamp=latest_target_timestamp)
 
         elif extension == '.srv':
-            srv_spec = parse_service_file(pkg_name, idl_file)
+            srv_spec = parse_service_file(pkg_name, ros_interface_file)
             request_fields = [
                 Field(
                     Type('uint64', context_package_name=pkg_name),
@@ -135,39 +112,11 @@ def generate_dds_idl(
             ]
 
             for spec, generated_file in generated_files:
-
-                try:
-                    output = StringIO()
-                    data = {'spec': spec, 'subfolder': 'srv', 'subfolders': subfolders}
-                    data.update(functions)
-                    # TODO reuse interpreter
-                    interpreter = em.Interpreter(
-                        output=output,
-                        options={
-                            em.RAW_OPT: True,
-                            em.BUFFERED_OPT: True,
-                        },
-                        globals=data,
-                    )
-                    interpreter.file(open(template_file_msg))
-                    content = output.getvalue()
-                    interpreter.shutdown()
-                except Exception:
-                    if os.path.exists(generated_file):
-                        os.remove(generated_file)
-                    raise
-
-                # only overwrite file if necessary
-                if os.path.exists(generated_file):
-                    with open(generated_file, 'r') as h:
-                        if h.read() == content:
-                            continue
-                try:
-                    os.makedirs(os.path.dirname(generated_file))
-                except FileExistsError:
-                    pass
-                with open(generated_file, 'w') as h:
-                    h.write(content)
+                data = {'spec': spec, 'subfolder': 'srv', 'subfolders': subfolders}
+                data.update(functions)
+                expand_template(
+                    template_file, data, generated_file,
+                    minimum_timestamp=latest_target_timestamp)
 
     return 0
 

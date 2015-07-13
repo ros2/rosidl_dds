@@ -81,23 +81,42 @@ macro(rosidl_generate_dds_interfaces target)
     endforeach()
   endforeach()
 
-  # TODO either pass space separated argument lists or split them in Python
+
+  set(target_dependencies
+    "${rosidl_generator_dds_idl_BIN}"
+    ${rosidl_generator_dds_idl_GENERATOR_FILES}
+    "${rosidl_generator_dds_idl_TEMPLATE_DIR}/msg.idl.template"
+    ${rosidl_generate_interfaces_IDL_FILES}
+    ${_dependency_files})
+  foreach(dep ${target_dependencies})
+    if(NOT EXISTS "${dep}")
+      message(FATAL_ERROR "Target dependency '${dep}' does not exist")
+    endif()
+  endforeach()
+
+  # use unique arguments file for each subfolder
+  set(generator_arguments_file "${CMAKE_BINARY_DIR}/rosidl_generator_dds_idl_")
+  foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
+    set(generator_arguments_file "${generator_arguments_file}_${_subfolder}_")
+  endforeach()
+  set(generator_arguments_file "${generator_arguments_file}_arguments.json")
+  rosidl_write_generator_arguments(
+    "${generator_arguments_file}"
+    PACKAGE_NAME "${PROJECT_NAME}"
+    ROS_INTERFACE_FILES "${_ARG_IDL_FILES}"
+    ROS_INTERFACE_DEPENDENCIES "${_dependencies}"
+    OUTPUT_DIR "${_output_basepath}"
+    TEMPLATE_DIR "${rosidl_generator_dds_idl_TEMPLATE_DIR}"
+    TARGET_DEPENDENCIES ${target_dependencies}
+  )
+
   add_custom_command(
     OUTPUT ${_generated_msg_files} ${_generated_srv_files}
     COMMAND ${PYTHON_EXECUTABLE} ${rosidl_generator_dds_idl_BIN}
-    --pkg-name ${PROJECT_NAME}
-    --ros-interface-files ${_ARG_IDL_FILES}
-    --deps ${_dependencies}
-    --output-dir ${_output_basepath}
-    --template-dir ${rosidl_generator_dds_idl_TEMPLATE_DIR}
+    --generator-arguments-file "${generator_arguments_file}"
     --subfolders ${_ARG_OUTPUT_SUBFOLDERS}
     --extension ${_ARG_EXTENSION}
-    DEPENDS
-    ${rosidl_generator_dds_idl_BIN}
-    ${rosidl_generator_dds_idl_GENERATOR_FILES}
-    ${rosidl_generator_dds_idl_TEMPLATE_DIR}/msg.idl.template
-    ${_ARG_IDL_FILES}
-    ${_dependency_files}
+    DEPENDS ${target_dependencies}
     COMMENT "Generating DDS interfaces"
     VERBATIM
   )

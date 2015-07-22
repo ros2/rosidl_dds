@@ -133,16 +133,18 @@ macro(rosidl_generate_dds_interfaces target)
     set(_msg_destination "${_msg_destination}/${_subfolder}")
     set(_srv_destination "${_srv_destination}/${_subfolder}")
   endforeach()
-  if(NOT "${_generated_msg_files} " STREQUAL " ")
-    install(
-      FILES ${_generated_msg_files}
-      DESTINATION "${_msg_destination}"
-    )
-  endif()
-  if(NOT "${_generated_srv_files} " STREQUAL " ")
-    install(
-      FILES ${_generated_srv_files}
-      DESTINATION "${_srv_destination}"
-    )
+  if(NOT rosidl_generate_interfaces_SKIP_INSTALL)
+    if(NOT "${_generated_msg_files} " STREQUAL " ")
+      install(
+        FILES ${_generated_msg_files}
+        DESTINATION "${_msg_destination}"
+      )
+    endif()
+    if(NOT "${_generated_srv_files} " STREQUAL " ")
+      install(
+        FILES ${_generated_srv_files}
+        DESTINATION "${_srv_destination}"
+      )
+    endif()
   endif()
 endmacro()

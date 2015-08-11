@@ -27,8 +27,8 @@ from rosidl_generator_cpp import escape_string
 from rosidl_generator_dds_idl import MSG_TYPE_TO_IDL
 }@
 @
-#ifndef __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__h__
-#define __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__h__
+#ifndef __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__idl__
+#define __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__idl__
 
 @#############################
 @# Include dependency messages
@@ -111,4 +111,4 @@ struct @(spec.base_type.type)_
 
 };  // module @(spec.base_type.pkg_name)
 
-#endif  // __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__h__
+#endif  // __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__idl__

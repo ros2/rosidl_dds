@@ -70,11 +70,17 @@ def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name
             srv_spec = parse_service_file(pkg_name, ros_interface_file)
             request_fields = [
                 Field(
-                    Type('uint64', context_package_name=pkg_name),
+                    Type('int32', context_package_name=pkg_name),
                     'client_guid_0', default_value_string=None),
                 Field(
-                    Type('uint64', context_package_name=pkg_name),
+                    Type('int32', context_package_name=pkg_name),
                     'client_guid_1', default_value_string=None),
+                Field(
+                    Type('int32', context_package_name=pkg_name),
+                    'client_guid_2', default_value_string=None),
+                Field(
+                    Type('int32', context_package_name=pkg_name),
+                    'client_guid_3', default_value_string=None),
                 Field(
                     Type('int64', context_package_name=pkg_name),
                     'sequence_number', default_value_string=None),
@@ -84,11 +90,17 @@ def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name
             ]
             response_fields = [
                 Field(
-                    Type('uint64', context_package_name=pkg_name),
+                    Type('int32', context_package_name=pkg_name),
                     'client_guid_0', default_value_string=None),
                 Field(
-                    Type('uint64', context_package_name=pkg_name),
+                    Type('int32', context_package_name=pkg_name),
                     'client_guid_1', default_value_string=None),
+                Field(
+                    Type('int32', context_package_name=pkg_name),
+                    'client_guid_2', default_value_string=None),
+                Field(
+                    Type('int32', context_package_name=pkg_name),
+                    'client_guid_3', default_value_string=None),
                 Field(
                     Type('int64', context_package_name=pkg_name),
                     'sequence_number', default_value_string=None),

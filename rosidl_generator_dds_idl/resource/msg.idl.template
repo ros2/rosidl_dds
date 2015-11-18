@@ -57,14 +57,14 @@ module dds_
 @##################
 @# Constants
 @[for constant in spec.constants]@
-  const @(MSG_TYPE_TO_IDL[constant.primitive_type]) @(spec.base_type.type)__@(constant.name) =
-@[if constant.primitive_type == 'bool']@
+  const @(MSG_TYPE_TO_IDL[constant.type]) @(spec.base_type.type)__@(constant.name) =
+@[if constant.type == 'bool']@
     @('TRUE' if constant.value else 'FALSE');
-@[elif constant.primitive_type == 'char']@
+@[elif constant.type == 'char']@
     '\@(constant.value)';
-@[elif constant.primitive_type == 'int8']@
+@[elif constant.type == 'int8']@
     @(constant.value if constant.value >= 0 else (constant.value + 256));
-@[elif constant.primitive_type == 'string']@
+@[elif constant.type == 'string']@
     "@(escape_string(constant.value))";
 @[else]@
     @(constant.value);

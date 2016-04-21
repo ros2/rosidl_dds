@@ -34,13 +34,13 @@ from rosidl_generator_dds_idl import MSG_TYPE_TO_IDL
 @# Include dependency messages
 @#############################
 @[if spec.base_type.type.startswith('Sample_')]
-@[for line in get_include_directives(spec, ['srv'] + subfolders)]@
+@[  for line in get_include_directives(spec, ['srv'] + subfolders)]@
 @(line)
-@[end for]@
+@[  end for]@
 @[else]@
-@[for line in get_include_directives(spec, ['msg'] + subfolders)]@
+@[  for line in get_include_directives(spec, ['msg'] + subfolders)]@
 @(line)
-@[end for]@
+@[  end for]@
 @[end if]@
 
 module @(spec.base_type.pkg_name)
@@ -58,17 +58,17 @@ module dds_
 @# Constants
 @[for constant in spec.constants]@
   const @(MSG_TYPE_TO_IDL[constant.type]) @(spec.base_type.type)__@(constant.name) =
-@[if constant.type == 'bool']@
+@[  if constant.type == 'bool']@
     @('TRUE' if constant.value else 'FALSE');
-@[elif constant.type == 'char']@
+@[  elif constant.type == 'char']@
     '\@(constant.value)';
-@[elif constant.type == 'int8']@
+@[  elif constant.type == 'int8']@
     @(constant.value if constant.value >= 0 else (constant.value + 256));
-@[elif constant.type == 'string']@
+@[  elif constant.type == 'string']@
     "@(escape_string(constant.value))";
-@[else]@
+@[  else]@
     @(constant.value);
-@[end if]@
+@[  end if]@
 @[end for]
 
 @{
@@ -95,9 +95,9 @@ struct @(spec.base_type.type)_
   @(idl_type) @(field.name)_;
 @[    end if]@
 @[  end for]@
-@[  else]@
+@[else]@
   boolean _dummy;
-@[  end if]@
+@[end if]@
 
 };  // struct @(spec.base_type.type)_
 

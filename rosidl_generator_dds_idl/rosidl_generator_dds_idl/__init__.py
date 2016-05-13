@@ -27,7 +27,7 @@ from rosidl_parser import parse_service_file
 def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name):
     args = read_generator_arguments(generator_arguments_file)
 
-    template_file = os.path.join(args['template_dir'], 'msg.idl.template')
+    template_file = os.path.join(args['template_dir'], 'msg.idl.em')
     assert os.path.exists(template_file), \
         "The template '%s' does not exist" % template_file
 

@@ -1,4 +1,4 @@
-// generated from rosidl_generator_dds_idl/resource/msg.idl.template
+// generated from rosidl_generator_dds_idl/resource/msg.idl.em
 
 @###############################################
 @#

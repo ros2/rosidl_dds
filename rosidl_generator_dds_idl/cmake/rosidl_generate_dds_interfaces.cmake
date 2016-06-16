@@ -52,15 +52,15 @@ macro(rosidl_generate_dds_interfaces target)
       set(_output_path "${_output_path}/${_subfolder}")
     endforeach()
     get_filename_component(_name "${_idl_file}" NAME_WE)
-    if("${_extension}" STREQUAL ".msg")
-      if("${_parent_folder} " STREQUAL "msg ")
+    if(_extension STREQUAL ".msg")
+      if(_parent_folder STREQUAL "msg")
         list(APPEND _generated_msg_files "${_output_path}/${_name}_.idl")
-      elseif("${_parent_folder} " STREQUAL "srv ")
+      elseif(_parent_folder STREQUAL "srv")
         list(APPEND _generated_srv_files "${_output_path}/${_name}_.idl")
       else()
         message(FATAL_ERROR "Interface file with unknown parent folder: ${_idl_file}")
       endif()
-    elseif("${_extension}" STREQUAL ".srv")
+    elseif(_extension STREQUAL ".srv")
       # TODO(dirk-thomas) this is only done for opensplice
       # and should be move to the opensplice specific generator package
       list(APPEND _generated_srv_files "${_output_path}/Sample_${_name}_Request_.idl")
@@ -134,13 +134,13 @@ macro(rosidl_generate_dds_interfaces target)
     set(_srv_destination "${_srv_destination}/${_subfolder}")
   endforeach()
   if(NOT rosidl_generate_interfaces_SKIP_INSTALL)
-    if(NOT "${_generated_msg_files} " STREQUAL " ")
+    if(NOT _generated_msg_files STREQUAL "")
       install(
         FILES ${_generated_msg_files}
         DESTINATION "${_msg_destination}"
       )
     endif()
-    if(NOT "${_generated_srv_files} " STREQUAL " ")
+    if(NOT _generated_srv_files STREQUAL "")
       install(
         FILES ${_generated_srv_files}
         DESTINATION "${_srv_destination}"

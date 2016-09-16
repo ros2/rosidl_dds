@@ -168,20 +168,25 @@ def msg_type_to_idl(type_):
     @param type: The message type
     @type type: rosidl_parser.Type
     """
+    string_upper_bound = None
     if type_.is_primitive_type():
         idl_type = MSG_TYPE_TO_IDL[type_.type]
+        if type_.type == 'string' and not type_.string_upper_bound == None:
+            string_upper_bound = type_.string_upper_bound
     else:
         if type_.type.endswith('_Request') or type_.type.endswith('_Response'):
             idl_type = '%s::srv::dds_::%s_' % (type_.pkg_name, type_.type)
         else:
             idl_type = '%s::msg::dds_::%s_' % (type_.pkg_name, type_.type)
-    return _msg_type_to_idl(type_, idl_type)
+    return _msg_type_to_idl(type_, idl_type, string_upper_bound)
 
 
-def _msg_type_to_idl(type_, idl_type):
+def _msg_type_to_idl(type_, idl_type, type_string_upper_bound=None):
     if type_.is_array:
         if type_.array_size is None or type_.is_upper_bound:
             sequence_type = idl_type
+            if not type_string_upper_bound == None:
+                sequence_type += '<%s>' % type_string_upper_bound
             if type_.is_upper_bound:
                 sequence_type += ', %u' % type_.array_size
             return ['', '', 'sequence<%s>' % sequence_type]

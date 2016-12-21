@@ -189,7 +189,9 @@ def _msg_type_to_idl(type_, idl_type, string_upper_bound=None):
                 sequence_type += '<%s>' % string_upper_bound
             if type_.is_upper_bound:
                 sequence_type += ', %u' % type_.array_size
-            return ['', '', 'sequence<%s>' % sequence_type]
+            return [
+                '', '',
+                'sequence<%s%s>' % (sequence_type, ' ' if sequence_type.endswith('>') else '')]
         else:
             typename = '%s_array_%s' % \
                 (idl_type.replace(' ', '_').replace('::', '__'), type_.array_size)

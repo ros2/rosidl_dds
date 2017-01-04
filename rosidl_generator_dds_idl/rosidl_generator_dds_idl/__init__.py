@@ -19,9 +19,9 @@ from rosidl_cmake import get_newest_modification_time
 from rosidl_cmake import read_generator_arguments
 from rosidl_parser import Field
 from rosidl_parser import MessageSpecification
-from rosidl_parser import Type
 from rosidl_parser import parse_message_file
 from rosidl_parser import parse_service_file
+from rosidl_parser import Type
 
 
 def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name):

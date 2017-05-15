@@ -15,7 +15,7 @@
 @#  - subfolder (string)
 @#    The subfolder / subnamespace of the message
 @#    Either 'msg' or 'srv'
-@#  - subfolders (list of string)
+@#  - subfolders (list of strings)
 @#    The subfolders under the package name
 @#    in which the type gets defined which are not part of the namespace
 @#  - get_include_directives (function)

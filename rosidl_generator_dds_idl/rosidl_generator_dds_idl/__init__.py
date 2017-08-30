@@ -142,7 +142,7 @@ MSG_TYPE_TO_IDL = {
 
 # used by the template
 def get_include_directives(spec, subfolders):
-    include_directives = set([])
+    include_directives = set()
     for field in spec.fields:
         if field.type.is_primitive_type():
             continue

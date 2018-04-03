@@ -92,7 +92,7 @@ macro(rosidl_generate_dds_interfaces target)
   endforeach()
 
   # use unique arguments file for each subfolder
-  set(generator_arguments_file "${CMAKE_BINARY_DIR}/rosidl_generator_dds_idl_")
+  set(generator_arguments_file "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl_")
   foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
     set(generator_arguments_file "${generator_arguments_file}_${_subfolder}_")
   endforeach()

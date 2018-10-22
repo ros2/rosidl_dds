@@ -40,6 +40,7 @@ macro(rosidl_generate_dds_interfaces target)
   set(_output_basepath "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl/${PROJECT_NAME}")
   set(_generated_msg_files "")
   set(_generated_srv_files "")
+  set(_generated_action_files "")
   foreach(_idl_file ${_ARG_IDL_FILES})
     get_filename_component(_extension "${_idl_file}" EXT)
     get_filename_component(_parent_folder "${_idl_file}" DIRECTORY)
@@ -54,6 +55,8 @@ macro(rosidl_generate_dds_interfaces target)
         list(APPEND _generated_msg_files "${_output_path}/${_name}_.idl")
       elseif(_parent_folder STREQUAL "srv")
         list(APPEND _generated_srv_files "${_output_path}/${_name}_.idl")
+      elseif(_parent_folder STREQUAL "action")
+        list(APPEND _generated_action_files "${_output_path}/${_name}_.idl")
       else()
         message(FATAL_ERROR "Interface file with unknown parent folder: ${_idl_file}")
       endif()
@@ -108,7 +111,7 @@ macro(rosidl_generate_dds_interfaces target)
   )
 
   add_custom_command(
-    OUTPUT ${_generated_msg_files} ${_generated_srv_files}
+    OUTPUT ${_generated_msg_files} ${_generated_srv_files} ${_generated_action_files}
     COMMAND ${PYTHON_EXECUTABLE} ${rosidl_generator_dds_idl_BIN}
     --generator-arguments-file "${generator_arguments_file}"
     --subfolders ${_ARG_OUTPUT_SUBFOLDERS}
@@ -121,14 +124,16 @@ macro(rosidl_generate_dds_interfaces target)
   add_custom_target(
     ${target}
     DEPENDS
-    ${_generated_msg_files} ${_generated_srv_files}
+    ${_generated_msg_files} ${_generated_srv_files} ${_generated_action_files}
   )
 
   set(_msg_destination "share/${PROJECT_NAME}/msg")
   set(_srv_destination "share/${PROJECT_NAME}/srv")
+  set(_action_destination "share/${PROJECT_NAME}/action")
   foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
     set(_msg_destination "${_msg_destination}/${_subfolder}")
     set(_srv_destination "${_srv_destination}/${_subfolder}")
+    set(_action_destination "${_action_destination}/${_subfolder}")
   endforeach()
   if(NOT rosidl_generate_interfaces_SKIP_INSTALL)
     if(NOT _generated_msg_files STREQUAL "")
@@ -141,6 +146,12 @@ macro(rosidl_generate_dds_interfaces target)
       install(
         FILES ${_generated_srv_files}
         DESTINATION "${_srv_destination}"
+      )
+    endif()
+    if(NOT _generated_action_files STREQUAL "")
+      install(
+        FILES ${_generated_action_files}
+        DESTINATION "${_action_destination}"
       )
     endif()
   endif()

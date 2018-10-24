@@ -14,7 +14,10 @@
 @#    Parsed specification of the .msg file
 @#  - subfolder (string)
 @#    The subfolder / subnamespace of the message
-@#    Either 'msg' or 'srv'
+@#    Could be 'msg', 'srv' or 'action'
+@#  - deps_subfolder (string)
+@#    The subfolder / subnamespace of the message dependencies
+@#    Could be 'msg', 'srv' or 'action'
 @#  - subfolders (list of strings)
 @#    The subfolders under the package name
 @#    in which the type gets defined which are not part of the namespace
@@ -33,15 +36,9 @@ from rosidl_generator_dds_idl import MSG_TYPE_TO_IDL
 @#############################
 @# Include dependency messages
 @#############################
-@[if spec.base_type.type.startswith('Sample_')]
-@[  for line in get_include_directives(spec, ['srv'] + subfolders)]@
+@[  for line in get_include_directives(spec, [deps_subfolder] + subfolders)]@
 @(line)
 @[  end for]@
-@[else]@
-@[  for line in get_include_directives(spec, ['msg'] + subfolders)]@
-@(line)
-@[  end for]@
-@[end if]@
 
 module @(spec.base_type.pkg_name)
 {
@@ -74,7 +71,7 @@ module dds_
 @{
 typedefs = set([])
 for field in spec.fields:
-  idl_typedef, idl_typedef_var, _ = msg_type_to_idl(field.type)
+  idl_typedef, idl_typedef_var, _ = msg_type_to_idl(field.type, deps_subfolder)
   if idl_typedef and idl_typedef_var and (idl_typedef, idl_typedef_var) not in typedefs:
     print('%s %s__%s__%s' % (idl_typedef, spec.base_type.pkg_name, spec.base_type.type, idl_typedef_var))
     typedefs.add((idl_typedef, idl_typedef_var))
@@ -88,7 +85,7 @@ struct @(spec.base_type.type)_
 
 @[if spec.fields]@
 @[  for field in spec.fields]@
-@{    idl_typedef, idl_typedef_var, idl_type = msg_type_to_idl(field.type)}@
+@{    idl_typedef, idl_typedef_var, idl_type = msg_type_to_idl(field.type, deps_subfolder)}@
 @[    if idl_typedef and idl_typedef_var]@
 @(      spec.base_type.pkg_name)__@(spec.base_type.type)__@(idl_type) @(field.name)_;
 @[    else]@

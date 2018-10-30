@@ -60,7 +60,12 @@ def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name
             spec = parse_message_file(pkg_name, ros_interface_file)
             generated_file = os.path.join(output_path, '%s_.idl' % spec.base_type.type)
 
-            data = {'spec': spec, 'subfolder': subfolder, 'subfolders': subfolders}
+            data = {
+                'spec': spec,
+                'subfolder': subfolder,
+                'deps_subfolder': 'msg',
+                'subfolders': subfolders
+            }
             data.update(functions)
             expand_template(
                 template_file, data, generated_file,
@@ -112,7 +117,12 @@ def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name
             ]
 
             for spec, generated_file in generated_files:
-                data = {'spec': spec, 'subfolder': 'srv', 'subfolders': subfolders}
+                data = {
+                    'spec': spec,
+                    'subfolder': subfolder,
+                    'deps_subfolder': subfolder,
+                    'subfolders': subfolders
+                }
                 data.update(functions)
                 expand_template(
                     template_file, data, generated_file,
@@ -158,7 +168,7 @@ def get_post_struct_lines(spec):
 
 
 # used by the template
-def msg_type_to_idl(type_):
+def msg_type_to_idl(type_, ns):
     """
     Convert a message type into the DDS declaration.
 
@@ -174,10 +184,7 @@ def msg_type_to_idl(type_):
         if type_.type == 'string' and type_.string_upper_bound is not None:
             string_upper_bound = type_.string_upper_bound
     else:
-        if type_.type.endswith('_Request') or type_.type.endswith('_Response'):
-            idl_type = '%s::srv::dds_::%s_' % (type_.pkg_name, type_.type)
-        else:
-            idl_type = '%s::msg::dds_::%s_' % (type_.pkg_name, type_.type)
+        idl_type = '%s::%s::dds_::%s_' % (type_.pkg_name, ns, type_.type)
     return _msg_type_to_idl(type_, idl_type, string_upper_bound=string_upper_bound)
 
 

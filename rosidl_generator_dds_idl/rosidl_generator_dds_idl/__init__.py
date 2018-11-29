@@ -17,21 +17,19 @@ import os
 from rosidl_cmake import expand_template
 from rosidl_cmake import get_newest_modification_time
 from rosidl_cmake import read_generator_arguments
-from rosidl_parser import Field
-from rosidl_parser import MessageSpecification
-from rosidl_parser import parse_message_file
-from rosidl_parser import parse_service_file
-from rosidl_parser import Type
+from rosidl_parser.definition import IdlLocator
+from rosidl_parser.parser import parse_idl_file
 
 
-def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name):
+def convert_dds_idl(generator_arguments_file, subfolders, extension_module_name):
     args = read_generator_arguments(generator_arguments_file)
 
-    template_file = os.path.join(args['template_dir'], 'msg.idl.em')
+    template_file = os.path.join(args['template_dir'], 'idl.idl.em')
     assert os.path.exists(template_file), \
         "The template '%s' does not exist" % template_file
 
     # look for extensions for the default functions
+    # TODO: update as needed
     functions = {
         'get_include_directives': get_include_directives,
         'get_post_struct_lines': get_post_struct_lines,
@@ -47,91 +45,44 @@ def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name
                     functions[function_name] = \
                         getattr(module, function_name)
 
-    pkg_name = args['package_name']
     latest_target_timestamp = get_newest_modification_time(args['target_dependencies'])
 
-    for ros_interface_file in args['ros_interface_files']:
-        subfolder = os.path.basename(os.path.dirname(ros_interface_file))
-        extension = os.path.splitext(ros_interface_file)[1]
-        output_path = os.path.join(args['output_dir'], subfolder)
-        for sub in subfolders:
-            output_path = os.path.join(output_path, sub)
-        if extension == '.msg':
-            spec = parse_message_file(pkg_name, ros_interface_file)
-            generated_file = os.path.join(output_path, '%s_.idl' % spec.base_type.type)
+    for idl_tuples in args.get('idl_tuples', []):
+        idl_parts = idl_tuple.rsplit(':', 1)
+        assert len(idl_parts) == 2
 
+        locator = IdlLocator(*idl_parts)
+        idl_rel_path = pathlib.Path(idl_parts[1])
+        try:
+            idl_file = parse_idl_file(
+                locator, png_file=os.path.join(
+                    args['output_dir'], str(idl_rel_path.parent),
+                    idl_rel_path.stem) + '.png')
+
+            generated_file = os.path.join(
+                args['output_dir'], str(idl_rel_path.parent),
+                generated_filename %
+                convert_camel_case_to_lower_case_underscore(idl_rel_path.stem))
             data = {
-                'spec': spec,
-                'subfolder': subfolder,
-                'deps_subfolder': 'msg',
-                'subfolders': subfolders
+                'package_name': args['package_name'],
+                'interface_path': idl_rel_path,
+                'content': idl_file.content
             }
             data.update(functions)
+
             expand_template(
-                template_file, data, generated_file,
-                minimum_timestamp=latest_target_timestamp)
+                os.path.basename(template_file), data,
+                generated_file, minimum_timestamp=latest_target_timestamp,
+                template_basepath=template_basepath)
 
-        elif extension == '.srv':
-            srv_spec = parse_service_file(pkg_name, ros_interface_file)
-            request_fields = [
-                Field(
-                    Type('uint64', context_package_name=pkg_name),
-                    'client_guid_0', default_value_string=None),
-                Field(
-                    Type('uint64', context_package_name=pkg_name),
-                    'client_guid_1', default_value_string=None),
-                Field(
-                    Type('int64', context_package_name=pkg_name),
-                    'sequence_number', default_value_string=None),
-                Field(
-                    Type('%s_Request' % srv_spec.srv_name, context_package_name=pkg_name),
-                    'request', default_value_string=None)
-            ]
-            response_fields = [
-                Field(
-                    Type('uint64', context_package_name=pkg_name),
-                    'client_guid_0', default_value_string=None),
-                Field(
-                    Type('uint64', context_package_name=pkg_name),
-                    'client_guid_1', default_value_string=None),
-                Field(
-                    Type('int64', context_package_name=pkg_name),
-                    'sequence_number', default_value_string=None),
-                Field(
-                    Type('%s_Response' % srv_spec.srv_name, context_package_name=pkg_name),
-                    'response', default_value_string=None)
-            ]
-            constants = []
-            sample_spec_request = MessageSpecification(
-                srv_spec.pkg_name, 'Sample_%s_Request' % srv_spec.srv_name, request_fields,
-                constants)
-            sample_spec_response = MessageSpecification(
-                srv_spec.pkg_name, 'Sample_%s_Response' % srv_spec.srv_name, response_fields,
-                constants)
-
-            generated_files = [
-                (sample_spec_request, os.path.join(
-                    output_path, '%s_.idl' % sample_spec_request.base_type.type)),
-                (sample_spec_response, os.path.join(
-                    output_path, '%s_.idl' % sample_spec_response.base_type.type)),
-            ]
-
-            for spec, generated_file in generated_files:
-                data = {
-                    'spec': spec,
-                    'subfolder': subfolder,
-                    'deps_subfolder': subfolder,
-                    'subfolders': subfolders
-                }
-                data.update(functions)
-                expand_template(
-                    template_file, data, generated_file,
-                    minimum_timestamp=latest_target_timestamp)
-
+        except Exception as e:
+            print(
+                'Error processing idl file: ' +
+                str(locator.get_absolute_path()), file=sys.stderr)
+            raise(e)
     return 0
 
 
-# used by the template
 MSG_TYPE_TO_IDL = {
     'bool': 'boolean',
     'byte': 'octet',

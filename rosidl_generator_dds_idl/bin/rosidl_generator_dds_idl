@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from rosidl_generator_dds_idl import generate_dds_idl
+from rosidl_generator_dds_idl import convert_dds_idl
 
 
 def main(argv=sys.argv[1:]):
@@ -25,7 +25,7 @@ def main(argv=sys.argv[1:]):
         help='The Python module extending the generator')
     args = parser.parse_args(argv)
 
-    return generate_dds_idl(
+    return convert_dds_idl(
         args.generator_arguments_file,
         args.subfolders,
         args.extension

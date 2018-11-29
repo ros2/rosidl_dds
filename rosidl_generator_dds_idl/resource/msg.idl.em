@@ -1,3 +1,68 @@
+@# Included from rosidl_generator_dds_idl/resource/idl.idl.em
+@{
+from rosidl_parser.definition import BasicType
+from rosidl_parser.definition import BoundedSequence
+from rosidl_parser.definition import CONSTANT_MODULE_SUFFIX
+from rosidl_parser.definition import NestedType
+from rosidl_parser.definition import Sequence
+from rosidl_parser.definition import String
+}@
+@[for ns in messages.structure.type.namespaces]@
+module @(ns) {
+
+@[end for]@
+module dds_ {
+
+@[if message.constants]@
+module @{message.structure.type.name}@@(CONSTANT_MODULE_SUFFIX) {
+@[  for constantc in message.constants]@
+  @
+@[if isinstance(constant.type, BasicType)]@
+@(constant.type)@
+@[elif isinstance(constant.type, NestedType)]@
+XXX array[] need to go behind the constant name though
+@[end for]@
+ @
+@(constant.name)@
+ = @
+@[    if isinstance(constant.type, BasicType)]@
+@[      if constant.type.type == 'boolean']@
+@('TRUE' if constant.value else 'FALSE')@
+@(constant.value)@
+@[      elif constant.type.type == 'char']@
+'@(constant.value)'@
+@[      else XXX-only-numerics?XXX]@
+@[      end for]@
+@[    elif isinstance(constant.type, String)]@
+"@(constant.value)"
+@[    elif isinstance(constant.type, NestedType)]@
+XXX array[] need to go behind the constant name though
+@[    end for]@
+;
+@[  end for]@
+}
+@[end if]@
+@[for m in members]@
+@[  if isinstance(member.type, BasicType)]@
+@(member.type)@
+@[  elif isinstance(member.type, Sequence)]@
+sequence<@(member.type.basetype)@
+@[    if isinstance(member.type, BoundedSequence)]@
+, @(member.type.upper_bound)@
+@[    end if]@
+>@
+@[  elif XXX]@
+@# XXX typedefs for arrays
+XXX@
+@[end if]@
+ @
+@(member.name);
+@[end for]@
+
+@##############################################################################
+@##############################################################################
+@##############################################################################
+
 // generated from rosidl_generator_dds_idl/resource/msg.idl.em
 
 @###############################################

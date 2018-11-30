@@ -39,17 +39,21 @@ macro(rosidl_generate_dds_interfaces target)
 
   set(_output_basepath "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl/${PROJECT_NAME}")
   set(_generated_files "")
+  set(_generated_dirs "")
   foreach(_idl_tuple ${_ARG_IDL_TUPLES})
     string(REGEX REPLACE ":([^:]*)$" "/\\1" _abs_idl_file "${_idl_tuple}")
     get_filename_component(_parent_folder "${_abs_idl_file}" DIRECTORY)
     get_filename_component(_parent_folder "${_parent_folder}" NAME)
     get_filename_component(_name "${_abs_idl_file}" NAME_WE)
-    set(_output_path "${_output_basepath}/${_parent_folder}")
+    set(_output_dirpath "${_parent_folder}")
     foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
-      set(_output_path "${_output_path}/${_subfolder}")
+      set(_output_dirpath "${_output_dirpath}/${_subfolder}")
     endforeach()
+    list(APPEND _generated_dirs "${_output_dirpath}")
+    set(_output_path "${_output_basepath}/${_output_dirpath}")
     list(APPEND _generated_files "${_output_path}/${_name}_.idl")
   endforeach()
+  list(REMOVE_DUPLICATES _generated_dirs)
 
   set(_dependency_files "")
   set(_dependencies "")
@@ -113,16 +117,15 @@ macro(rosidl_generate_dds_interfaces target)
     ${_generated_files}
   )
 
-  set(_idl_destination "share/${PROJECT_NAME}/idl")
-  foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
-    set(_idl_destination "${_idl_destination}/${_subfolder}")
-  endforeach()
+  set(_idl_destination "share/${PROJECT_NAME}/")
   if(NOT rosidl_generate_interfaces_SKIP_INSTALL)
-    if(NOT _generated_files STREQUAL "")
-      install(
-        FILES ${_generated_files}
-        DESTINATION "${_idl_destination}"
-      )
+    if(NOT _generated_dirs STREQUAL "")
+      foreach(_dir "${_generated_dirs}")
+        install(
+          DIRECTORY "${_output_basepath}/${_dir}/"
+          DESTINATION "${_idl_destination}/${_dir}"
+        )
+      endforeach()
     endif()
   endif()
 endmacro()

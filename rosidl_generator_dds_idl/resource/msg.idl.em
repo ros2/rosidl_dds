@@ -27,18 +27,18 @@ struct @(message.structure.type.name)_ {
 @[for member in message.structure.members]@
 @[  if isinstance(member.type, NestedType)]@
 @[    if isinstance(member.type, Array)]@
-@(idl_typename(member.type.basetype)) @(member.name)[@(member.type.size)];
+@(idl_typename(member.type.basetype)) @(member.name)_[@(member.type.size)];
 @[    elif isinstance(member.type, Sequence)]@
 sequence<@(idl_typename(member.type.basetype))@
 @[      if isinstance(member.type, BoundedSequence)]@
 , @(member.type.upper_bound)@
 @[      end if]@
-> @(member.name);
+> @(member.name)_;
 @[    else]@
 
 @[    end if]
 @[  elif isinstance(member.type, BaseType)]@
-@(idl_typename(member.type)) @(member.name);
+@(idl_typename(member.type)) @(member.name)_;
 @[  else]@
 
 @[  end if]@

@@ -19,9 +19,13 @@ def main(argv=sys.argv[1:]):
         nargs='*',
         help='The subfolders between the package name and the interface '
              'definition')
+    parser.add_argument(
+        '--extension',
+        nargs='?',
+        help='The Python module extending the generator')
     args = parser.parse_args(argv)
 
-    return generate_dds_idl(args.generator_arguments_file, args.subfolders)
+    return generate_dds_idl(args.generator_arguments_file, args.subfolders, args.extension)
 
 
 if __name__ == '__main__':

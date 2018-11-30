@@ -101,7 +101,7 @@ macro(rosidl_generate_dds_interfaces target)
     COMMAND ${PYTHON_EXECUTABLE} ${rosidl_generator_dds_idl_BIN}
     --generator-arguments-file "${generator_arguments_file}"
     --subfolders ${_ARG_OUTPUT_SUBFOLDERS}
-    # --extension ${_ARG_EXTENSION}
+    --extension ${_ARG_EXTENSION}
     DEPENDS ${target_dependencies}
     COMMENT "Generating DDS interfaces"
     VERBATIM

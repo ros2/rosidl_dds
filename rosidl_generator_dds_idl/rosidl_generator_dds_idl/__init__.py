@@ -23,15 +23,33 @@ from rosidl_parser.definition import String
 from rosidl_parser.definition import WString
 
 
-def generate_dds_idl(generator_arguments_file, subfolders):
+def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name):
     mapping = {
         'idl.idl.em': os.path.join(*subfolders, '%s_.idl')
     }
-    data = {
-      'subfolders' : subfolders
+    additional_context = {
+      'subfolders' : subfolders,
+      'get_post_struct_lines': get_post_struct_lines,
+      'idl_typename': idl_typename,
+      'idl_literal': idl_literal,
     }
-    generate_files(generator_arguments_file, mapping, data, keep_case=True)
+    # Look for extensions for additional context
+    if extension_module_name is not None:
+        pkg = __import__(extension_module_name)
+        module_name = extension_module_name.rsplit('.', 1)[1]
+        if hasattr(pkg, module_name):
+            module = getattr(pkg, module_name)
+            for entity_name in additional_context.keys():
+                if hasattr(module, entity_name):
+                    additional_context[entity_name] = \
+                        getattr(module, entity_name)
+    generate_files(generator_arguments_file, mapping, additional_context, keep_case=True)
     return 0
+
+
+# used by the template
+def get_post_struct_lines(message):
+    return []
 
 
 # used by the template
@@ -68,6 +86,7 @@ def idl_typename(type_):
     return typename
 
 
+# used by the template
 def idl_literal(type_, value):
     assert(isinstance(type_, BaseType))
     if isinstance(type_, BasicType):

@@ -46,6 +46,10 @@ sequence<@(idl_typename(member.type.basetype))@
 
 };
 
+@[for line in get_post_struct_lines(message)]@
+@(line)
+@[end for]@
+
 };  // module dds_
 
 @[for ns in reversed(message.structure.type.namespaces)]@

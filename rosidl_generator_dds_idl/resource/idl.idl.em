@@ -32,12 +32,14 @@ for message in content.get_elements_of_type(Message):
 for service in content.get_elements_of_type(Service):
     TEMPLATE(
         'srv.idl.em', package_name=package_name,
-        interface_path=interface_path, service=service
+        interface_path=interface_path, service=service,
+        get_post_struct_lines=get_post_struct_lines
     )
 
 for action in content.get_elements_of_type(Action):
     TEMPLATE(
         'action.idl.em', package_name=package_name,
-        interface_path=interface_path, action=action
+        interface_path=interface_path, action=action,
+        get_post_struct_lines=get_post_struct_lines
     )
 }@

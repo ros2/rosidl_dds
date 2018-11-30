@@ -22,7 +22,12 @@ from rosidl_parser.definition import Message
 }@
 @[for message in content.get_elements_of_type(Message)]@
 
-@(TEMPLATE('msg.idl.em', message=message, get_post_struct_lines=get_post_struct_lines))@
+@(TEMPLATE(
+    'msg.idl.em',
+     package_name=package_name,
+     interface_path=interface_path,
+     message=message,
+     get_post_struct_lines=get_post_struct_lines))@
 @[end for]@
 @{
 from rosidl_parser.definition import Service

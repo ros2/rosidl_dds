@@ -2,13 +2,22 @@
 @{
 from rosidl_generator_dds_idl import idl_typename, idl_literal
 
+from rosidl_cmake import convert_camel_case_to_lower_case_underscore
 from rosidl_parser.definition import Array
 from rosidl_parser.definition import BaseType
 from rosidl_parser.definition import BoundedSequence
 from rosidl_parser.definition import CONSTANT_MODULE_SUFFIX
 from rosidl_parser.definition import NestedType
 from rosidl_parser.definition import Sequence
+
+header_guard_parts = [package_name] + list(interface_path.parents[0].parts) + \
+    [convert_camel_case_to_lower_case_underscore(interface_path.stem)] + \
+    ['idl']
 }@
+
+#ifndef __@('__'.join(header_guard_parts))__
+#define __@('__'.join(header_guard_parts))__
+
 @[for ns in message.structure.type.namespaces]@
 module @(ns) {
 
@@ -56,3 +65,5 @@ sequence<@(idl_typename(member.type.basetype))@
 };  // module @(ns) {
 
 @[end for]@
+
+#endif  // __@('__'.join(header_guard_parts))__

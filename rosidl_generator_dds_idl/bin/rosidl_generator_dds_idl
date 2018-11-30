@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from rosidl_generator_dds_idl import convert_dds_idl
+from rosidl_generator_dds_idl import generate_dds_idl
 
 
 def main(argv=sys.argv[1:]):
@@ -14,15 +14,11 @@ def main(argv=sys.argv[1:]):
         '--generator-arguments-file',
         required=True,
         help='The location of the file containing the generator arguments')
-     parser.add_argument(
-         '--subfolders',
-         nargs='*',
-         help='The subfolders between the package name and the interface '
-              'definition')
-    # parser.add_argument(
-    #     '--extension',
-    #     nargs='?',
-    #     help='The Python module extending the generator')
+    parser.add_argument(
+        '--subfolders',
+        nargs='*',
+        help='The subfolders between the package name and the interface '
+             'definition')
     args = parser.parse_args(argv)
 
     return generate_dds_idl(args.generator_arguments_file, args.subfolders)

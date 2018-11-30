@@ -12,32 +12,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 from rosidl_cmake import generate_files
-from rosidl_parser import BaseType
-from rosidl_parser import BaseString
-from rosidl_parser import BasicType
-from rosidl_parser import NamespacedType
-from rosidl_parser import String
-from rosidl_parser import WString
+from rosidl_parser.definition import BaseType
+from rosidl_parser.definition import BaseString
+from rosidl_parser.definition import BasicType
+from rosidl_parser.definition import NamespacedType
+from rosidl_parser.definition import String
+from rosidl_parser.definition import WString
 
 
 def generate_dds_idl(generator_arguments_file, subfolders):
     mapping = {
-        'idl.idl.em': os.path.join(*subfolders, '%s.idl')
+        'idl.idl.em': os.path.join(*subfolders, '%s_.idl')
     }
-    functions = {
-        'idl_typename': idl_typename,
-        'idl_literal': idl_literal
+    data = {
+      'subfolders' : subfolders
     }
-    generate_files(generator_arguments_file, mapping, functions)
+    generate_files(generator_arguments_file, mapping, data, keep_case=True)
     return 0
+
+
+# used by the template
+EXPLICIT_TYPE_TO_IMPLICIT_TYPE = {
+    'int8': 'octet',
+    'uint8': 'octet',
+    'int16': 'short',
+    'uint16': 'unsigned short',
+    'int32': 'long',
+    'uint32': 'unsigned long',
+    'int64': 'long long',
+    'uint64': 'unsigned long long',
+}
 
 
 # used by the template
 def idl_typename(type_):
     assert(isinstance(type_, BaseType))
     if isinstance(type_, BasicType):
-        typename = type_.type
+        typename = EXPLICIT_TYPE_TO_IMPLICIT_TYPE.get(type_.type, type_.type)
     elif isinstance(type_, BaseString):
         if isinstance(type_, String):
             typename = 'string'

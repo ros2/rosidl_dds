@@ -1,6 +1,25 @@
 @# Included from rosidl_generator_dds_idl/resource/idl.idl.em
-@(TEMPLATE('msg.idl.em', message=action.goal_request))@
-
-@(TEMPLATE('msg.idl.em', message=action.result_response))@
-
-@(TEMPLATE('msg.idl.em', message=action.feedback))@
+@(
+    TEMPLATE(
+        'srv.idl.em',
+        package_name=package_name,
+        interface_path=interface_path,
+        message=action.goal_service
+    )
+)@
+@(
+    TEMPLATE(
+        'srv.idl.em',
+        package_name=package_name,
+        interface_path=interface_path,
+        message=action.result_service
+    )
+)@
+@(
+    TEMPLATE(
+        'msg.idl.em',
+        package_name=package_name,
+        interface_path=interface_path,
+        message=action.feedback_message
+    )
+)@

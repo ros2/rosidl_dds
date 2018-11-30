@@ -44,7 +44,11 @@ macro(rosidl_generate_dds_interfaces target)
     get_filename_component(_parent_folder "${_abs_idl_file}" DIRECTORY)
     get_filename_component(_parent_folder "${_parent_folder}" NAME)
     get_filename_component(_name "${_abs_idl_file}" NAME_WE)
-    list(APPEND _generated_files "${_output_path}/${_parent_folder}/${_name}_.idl")
+    set(_output_path "${_output_basepath}/${_parent_folder}")
+    foreach(_subfolder ${_ARG_OUTPUT_SUBFOLDERS})
+      set(_output_path "${_output_path}/${_subfolder}")
+    endforeach()
+    list(APPEND _generated_files "${_output_path}/${_name}_.idl")
   endforeach()
 
   set(_dependency_files "")
@@ -97,7 +101,7 @@ macro(rosidl_generate_dds_interfaces target)
     COMMAND ${PYTHON_EXECUTABLE} ${rosidl_generator_dds_idl_BIN}
     --generator-arguments-file "${generator_arguments_file}"
     --subfolders ${_ARG_OUTPUT_SUBFOLDERS}
-    --extension ${_ARG_EXTENSION}
+    # --extension ${_ARG_EXTENSION}
     DEPENDS ${target_dependencies}
     COMMENT "Generating DDS interfaces"
     VERBATIM

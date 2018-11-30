@@ -21,9 +21,9 @@ from rosidl_parser import String
 from rosidl_parser import WString
 
 
-def generate_dds_idl(generator_arguments_file):
+def generate_dds_idl(generator_arguments_file, subfolders):
     mapping = {
-        'idl.idl.em': '%s.idl'
+        'idl.idl.em': os.path.join(*subfolders, '%s.idl')
     }
     functions = {
         'idl_typename': idl_typename,

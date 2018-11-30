@@ -14,22 +14,18 @@ def main(argv=sys.argv[1:]):
         '--generator-arguments-file',
         required=True,
         help='The location of the file containing the generator arguments')
-    parser.add_argument(
-        '--subfolders',
-        nargs='*',
-        help='The subfolders between the package name and the interface '
-             'definition')
-    parser.add_argument(
-        '--extension',
-        nargs='?',
-        help='The Python module extending the generator')
+     parser.add_argument(
+         '--subfolders',
+         nargs='*',
+         help='The subfolders between the package name and the interface '
+              'definition')
+    # parser.add_argument(
+    #     '--extension',
+    #     nargs='?',
+    #     help='The Python module extending the generator')
     args = parser.parse_args(argv)
 
-    return convert_dds_idl(
-        args.generator_arguments_file,
-        args.subfolders,
-        args.extension
-    )
+    return generate_dds_idl(args.generator_arguments_file, args.subfolders)
 
 
 if __name__ == '__main__':

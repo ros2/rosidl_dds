@@ -121,7 +121,7 @@ macro(rosidl_generate_dds_interfaces target)
   set(_idl_destination "share/${PROJECT_NAME}/")
   if(NOT rosidl_generate_interfaces_SKIP_INSTALL)
     if(NOT _generated_dirs STREQUAL "")
-      foreach(_dir "${_generated_dirs}")
+      foreach(_dir ${_generated_dirs})
         install(
           DIRECTORY "${_output_basepath}/${_dir}/"
           DESTINATION "${_idl_destination}/${_dir}"

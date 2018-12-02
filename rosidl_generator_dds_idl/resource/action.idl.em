@@ -3,14 +3,14 @@
     'srv.idl.em',
     package_name=package_name,
     interface_path=interface_path,
-    message=action.goal_service,
+    service=action.goal_service,
     get_post_struct_lines=get_post_struct_lines
 ))@
 @(TEMPLATE(
     'srv.idl.em',
     package_name=package_name,
     interface_path=interface_path,
-    message=action.result_service,
+    service=action.result_service,
     get_post_struct_lines=get_post_struct_lines
 ))@
 @(TEMPLATE(

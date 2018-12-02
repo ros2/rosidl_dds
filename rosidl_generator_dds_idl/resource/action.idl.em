@@ -1,22 +1,45 @@
 @# Included from rosidl_generator_dds_idl/resource/idl.idl.em
-@(TEMPLATE(
+@{
+TEMPLATE(
+    'msg.idl.em',
+    package_name=package_name,
+    interface_path=interface_path,
+    message=action.goal_request,
+    get_post_struct_lines=get_post_struct_lines
+)
+TEMPLATE(
     'srv.idl.em',
     package_name=package_name,
     interface_path=interface_path,
     service=action.goal_service,
     get_post_struct_lines=get_post_struct_lines
-))@
-@(TEMPLATE(
+)
+TEMPLATE(
+    'msg.idl.em',
+    package_name=package_name,
+    interface_path=interface_path,
+    message=action.result_response,
+    get_post_struct_lines=get_post_struct_lines
+)
+TEMPLATE(
     'srv.idl.em',
     package_name=package_name,
     interface_path=interface_path,
     service=action.result_service,
     get_post_struct_lines=get_post_struct_lines
-))@
-@(TEMPLATE(
+)
+TEMPLATE(
+    'msg.idl.em',
+    package_name=package_name,
+    interface_path=interface_path,
+    message=action.feedback,
+    get_post_struct_lines=get_post_struct_lines
+)
+TEMPLATE(
     'msg.idl.em',
     package_name=package_name,
     interface_path=interface_path,
     message=action.feedback_message,
     get_post_struct_lines=get_post_struct_lines
-))@
+)
+}@

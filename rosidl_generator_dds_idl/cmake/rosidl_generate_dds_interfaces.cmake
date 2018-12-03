@@ -30,8 +30,9 @@
 # @public
 #
 macro(rosidl_generate_dds_interfaces target)
+  set(SERVICE_TEMPLATES OPTIONAL)
   cmake_parse_arguments(_ARG "" "EXTENSION"
-    "IDL_TUPLES;DEPENDENCY_PACKAGE_NAMES;OUTPUT_SUBFOLDERS" ${ARGN})
+    "IDL_TUPLES;DEPENDENCY_PACKAGE_NAMES;OUTPUT_SUBFOLDERS;SERVICE_TEMPLATES" ${ARGN})
   if(_ARG_UNPARSED_ARGUMENTS)
     message(FATAL_ERROR "rosidl_generate_dds_interfaces() called with "
       "unused arguments: ${_ARG_UNPARSED_ARGUMENTS}")
@@ -73,7 +74,6 @@ macro(rosidl_generate_dds_interfaces target)
     "${rosidl_generator_dds_idl_TEMPLATE_DIR}/idl.idl.em"
     "${rosidl_generator_dds_idl_TEMPLATE_DIR}/msg.idl.em"
     "${rosidl_generator_dds_idl_TEMPLATE_DIR}/srv.idl.em"
-    "${rosidl_generator_dds_idl_TEMPLATE_DIR}/wrapper_msg.idl.em"
     ${rosidl_generate_interfaces_IDL_FILES}
     ${_dependency_files})
   foreach(dep ${target_dependencies})
@@ -104,6 +104,7 @@ macro(rosidl_generate_dds_interfaces target)
   add_custom_command(
     OUTPUT ${_generated_files}
     COMMAND ${PYTHON_EXECUTABLE} ${rosidl_generator_dds_idl_BIN}
+    --additional-service-templates ${_ARG_SERVICE_TEMPLATES}
     --generator-arguments-file "${generator_arguments_file}"
     --subfolders ${_ARG_OUTPUT_SUBFOLDERS}
     --extension ${_ARG_EXTENSION}

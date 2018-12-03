@@ -12,7 +12,8 @@ TEMPLATE(
     package_name=package_name,
     interface_path=interface_path,
     service=action.goal_service,
-    get_post_struct_lines=get_post_struct_lines
+    get_post_struct_lines=get_post_struct_lines,
+    additional_service_templates=additional_service_templates
 )
 TEMPLATE(
     'msg.idl.em',
@@ -26,7 +27,8 @@ TEMPLATE(
     package_name=package_name,
     interface_path=interface_path,
     service=action.result_service,
-    get_post_struct_lines=get_post_struct_lines
+    get_post_struct_lines=get_post_struct_lines,
+    additional_service_templates=additional_service_templates
 )
 TEMPLATE(
     'msg.idl.em',

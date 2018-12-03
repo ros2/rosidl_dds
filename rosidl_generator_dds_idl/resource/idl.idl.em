@@ -43,14 +43,16 @@ for service in content.get_elements_of_type(Service):
     TEMPLATE(
         'srv.idl.em', package_name=package_name,
         interface_path=interface_path, service=service,
-        get_post_struct_lines=get_post_struct_lines
+        get_post_struct_lines=get_post_struct_lines,
+        additional_service_templates=additional_service_templates
     )
 
 for action in content.get_elements_of_type(Action):
     TEMPLATE(
         'action.idl.em', package_name=package_name,
         interface_path=interface_path, action=action,
-        get_post_struct_lines=get_post_struct_lines
+        get_post_struct_lines=get_post_struct_lines,
+        additional_service_templates=additional_service_templates
     )
 }@
 

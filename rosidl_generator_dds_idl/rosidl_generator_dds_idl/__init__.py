@@ -23,11 +23,12 @@ from rosidl_parser.definition import String
 from rosidl_parser.definition import WString
 
 
-def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name):
+def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name, additional_service_templates):
     mapping = {
         'idl.idl.em': os.path.join(*subfolders, '%s_.idl')
     }
     additional_context = {
+      'additional_service_templates': additional_service_templates,
       'subfolders' : subfolders,
       'get_post_struct_lines': get_post_struct_lines,
       'idl_typename': idl_typename,

@@ -95,6 +95,8 @@ def idl_literal(type_, value):
             literal = '''TRUE''' if value else '''FALSE'''
         elif type_.type == 'char':
             literal = '''%s''' % value
+        elif type_.type == 'int8':
+            literal = '%d' % (value if value >= 0 else value + 256)
         elif type_.type in ('float', 'double'):
             literal = '%f' % value
         else:

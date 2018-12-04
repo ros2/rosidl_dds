@@ -12,7 +12,7 @@ includes = content.get_elements_of_type(Include)
 @{
 name, ext = os.path.splitext(include.locator)
 dir_name = os.path.dirname(name)
-include_name = '{}_{}'.format(os.path.join(dir_name, *subfolders, os.path.basename(name)), ext)
+include_name = '{}_{}'.format('/'.join([dir_name] + subfolders + [os.path.basename(name)]), ext)
 }@
 #include "@(include_name)"
 @[  end for]@

@@ -7,14 +7,21 @@ from rosidl_parser.definition import Include
 includes = content.get_elements_of_type(Include)
 }@
 @[if includes]@
-
+@{
+include_directives = set()
+}@
 @[  for include in includes]@
 @{
 name, ext = os.path.splitext(include.locator)
 dir_name = os.path.dirname(name)
 include_name = '{}_{}'.format('/'.join([dir_name] + subfolders + [os.path.basename(name)]), ext)
 }@
+@[    if include_name not in include_directives]@
 #include "@(include_name)"
+@[    end if]@
+@{
+include_directives.add(include_name)
+}@
 @[  end for]@
 @[end if]@
 @{

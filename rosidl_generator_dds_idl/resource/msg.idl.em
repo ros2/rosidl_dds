@@ -57,6 +57,6 @@ sequence<@(idl_typename(member.type.basetype))@
 };  // module dds_
 
 @[for ns in reversed(message.structure.type.namespaces)]@
-};  // module @(ns) {
+};  // module @(ns)
 
 @[end for]@

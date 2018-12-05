@@ -15,21 +15,24 @@
 import os
 
 from rosidl_cmake import generate_files
-from rosidl_parser.definition import BaseType
 from rosidl_parser.definition import BaseString
+from rosidl_parser.definition import BaseType
 from rosidl_parser.definition import BasicType
 from rosidl_parser.definition import NamespacedType
 from rosidl_parser.definition import String
 from rosidl_parser.definition import WString
 
 
-def generate_dds_idl(generator_arguments_file, subfolders, extension_module_name, additional_service_templates):
+def generate_dds_idl(
+    generator_arguments_file, subfolders, extension_module_name,
+    additional_service_templates
+):
     mapping = {
         'idl.idl.em': os.path.join(*subfolders, '%s_.idl')
     }
     additional_context = {
       'additional_service_templates': additional_service_templates,
-      'subfolders' : subfolders,
+      'subfolders': subfolders,
       'get_post_struct_lines': get_post_struct_lines,
       'idl_typename': idl_typename,
       'idl_literal': idl_literal,
@@ -92,9 +95,9 @@ def idl_literal(type_, value):
     assert(isinstance(type_, BaseType))
     if isinstance(type_, BasicType):
         if type_.type == 'boolean':
-            literal = '''TRUE''' if value else '''FALSE'''
+            literal = 'TRUE' if value else 'FALSE'
         elif type_.type == 'char':
-            literal = '''%s''' % value
+            literal = '%s' % value
         elif type_.type == 'int8':
             literal = '%d' % (value if value >= 0 else value + 256)
         elif type_.type in ('float', 'double'):

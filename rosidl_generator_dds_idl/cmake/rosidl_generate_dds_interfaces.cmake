@@ -17,7 +17,8 @@
 #
 # :param target: the name of the generation target,
 # :type target: string
-# :param IDL_TUPLES: a list of IDL files of the form "path/to:subfolder/Message.idl"
+# :param IDL_TUPLES: a list of IDL files of the form
+#   "path/to:subfolder/Message.idl"
 # :type IDL_TUPLES: list of tuples of colon separated strings
 # :param DEPENDENCY_PACKAGE_NAMES: a list of dependency package names
 # :type DEPENDENCY_PACKAGE_NAMES: list of strings

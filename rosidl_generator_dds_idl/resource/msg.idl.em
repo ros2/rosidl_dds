@@ -34,6 +34,8 @@ struct @(message.structure.type.name)_ {
 sequence<@(idl_typename(member.type.basetype))@
 @[      if isinstance(member.type, BoundedSequence)]@
 , @(member.type.upper_bound)@
+@[      elif idl_typename(member.type.basetype).endswith('>')]@
+ @
 @[      end if]@
 > @(member.name)_;
 @[    else]@

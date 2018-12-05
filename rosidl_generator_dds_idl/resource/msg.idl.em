@@ -20,7 +20,7 @@ module dds_ {
 @[if message.constants]@
 module @(message.structure.type.name)@(CONSTANT_MODULE_SUFFIX) {
 @[  for constant in message.constants.values()]@
-const @(idl_typename(constant.type)) @(constant.name) = @(idl_literal(constant.type, constant.value));
+const @(idl_typename(constant.type)) @(constant.name)_ = @(idl_literal(constant.type, constant.value));
 @[  end for]
 };
 @[end if]@

@@ -120,7 +120,7 @@ macro(rosidl_generate_dds_interfaces target)
     ${_generated_files}
   )
 
-  set(_idl_destination "share/${PROJECT_NAME}/")
+  set(_idl_destination "share/${PROJECT_NAME}")
   if(NOT rosidl_generate_interfaces_SKIP_INSTALL)
     if(NOT _generated_dirs STREQUAL "")
       foreach(_dir ${_generated_dirs})

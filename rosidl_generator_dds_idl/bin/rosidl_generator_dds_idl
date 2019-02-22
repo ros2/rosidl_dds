@@ -13,7 +13,7 @@ def main(argv=sys.argv[1:]):
     parser.add_argument(
         '--additional-service-templates',
         nargs='*',
-        help='The location of the file containing the generator arguments')
+        help='Additional EmPy templates to evaluate when generating services')
     parser.add_argument(
         '--generator-arguments-file',
         required=True,

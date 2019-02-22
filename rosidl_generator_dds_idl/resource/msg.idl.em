@@ -27,6 +27,12 @@ const @(idl_typename(constant.type)) @(constant.name)_ = @(idl_literal(constant.
 
 struct @(message.structure.type.name)_ {
 @[for member in message.structure.members]@
+@[  for value in member.get_annotation_values('key')]@
+@@key@
+@[    if value]@
+("@(value)")@
+@[    end if]
+@[  end for]@
 @[  if isinstance(member.type, NestedType)]@
 @[    if isinstance(member.type, Array)]@
 @(idl_typename(member.type.basetype)) @(member.name)_[@(member.type.size)];

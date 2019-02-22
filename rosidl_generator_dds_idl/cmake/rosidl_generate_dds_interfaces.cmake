@@ -22,6 +22,9 @@
 # :type IDL_TUPLES: list of tuples of colon separated strings
 # :param DEPENDENCY_PACKAGE_NAMES: a list of dependency package names
 # :type DEPENDENCY_PACKAGE_NAMES: list of strings
+# :param SERVICE_TEMPLATES: a list of additional EmPy templates to evaluate
+#   when generating services
+# :type SERVICE_TEMPLATES: list of strings
 # :param OUTPUT_SUBFOLDERS: a list of subfolders between the package name and
 #   the interface name
 # :type OUTPUT_SUBFOLDERS: optional list of strings
@@ -31,7 +34,6 @@
 # @public
 #
 macro(rosidl_generate_dds_interfaces target)
-  set(SERVICE_TEMPLATES OPTIONAL)
   cmake_parse_arguments(_ARG "" "EXTENSION"
     "IDL_TUPLES;DEPENDENCY_PACKAGE_NAMES;OUTPUT_SUBFOLDERS;SERVICE_TEMPLATES" ${ARGN})
   if(_ARG_UNPARSED_ARGUMENTS)

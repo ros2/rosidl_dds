@@ -31,7 +31,8 @@ def main(argv=sys.argv[1:]):
 
     return generate_dds_idl(
         args.generator_arguments_file,
-        args.subfolders, args.extension,
+        args.subfolders,
+        args.extension,
         args.additional_service_templates,
     )
 

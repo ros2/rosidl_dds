@@ -42,10 +42,12 @@ macro(rosidl_generate_dds_interfaces target)
   endif()
 
   set(_output_basepath "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl/${PROJECT_NAME}")
+  set(_abs_idl_files "")
   set(_generated_files "")
   set(_generated_dirs "")
   foreach(_idl_tuple ${_ARG_IDL_TUPLES})
     string(REGEX REPLACE ":([^:]*)$" "/\\1" _abs_idl_file "${_idl_tuple}")
+    list(APPEND _abs_idl_files "${_abs_idl_file}")
     get_filename_component(_parent_folder "${_abs_idl_file}" DIRECTORY)
     get_filename_component(_parent_folder "${_parent_folder}" NAME)
     get_filename_component(_name "${_abs_idl_file}" NAME_WE)
@@ -77,6 +79,7 @@ macro(rosidl_generate_dds_interfaces target)
     "${rosidl_generator_dds_idl_TEMPLATE_DIR}/idl.idl.em"
     "${rosidl_generator_dds_idl_TEMPLATE_DIR}/msg.idl.em"
     "${rosidl_generator_dds_idl_TEMPLATE_DIR}/srv.idl.em"
+    ${_abs_idl_files}
     ${_dependency_files})
   foreach(dep ${target_dependencies})
     if(NOT EXISTS "${dep}")

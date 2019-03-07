@@ -79,6 +79,7 @@ macro(rosidl_generate_dds_interfaces target)
     "${rosidl_generator_dds_idl_TEMPLATE_DIR}/idl.idl.em"
     "${rosidl_generator_dds_idl_TEMPLATE_DIR}/msg.idl.em"
     "${rosidl_generator_dds_idl_TEMPLATE_DIR}/srv.idl.em"
+    ${_ARG_SERVICE_TEMPLATES}
     ${_abs_idl_files}
     ${_dependency_files})
   foreach(dep ${target_dependencies})

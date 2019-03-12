@@ -1,111 +1,68 @@
-// generated from rosidl_generator_dds_idl/resource/msg.idl.em
-
-@###############################################
-@#
-@# ROS interface to DDS interface converter
-@#
-@# EmPy template for generating <msg>.idl files
-@#
-@###############################################
-@# Start of Template
-@#
-@# Context:
-@#  - spec (rosidl_parser.MessageSpecification)
-@#    Parsed specification of the .msg file
-@#  - subfolder (string)
-@#    The subfolder / subnamespace of the message
-@#    Could be 'msg', 'srv' or 'action'
-@#  - deps_subfolder (string)
-@#    The subfolder / subnamespace of the message dependencies
-@#    Could be 'msg', 'srv' or 'action'
-@#  - subfolders (list of strings)
-@#    The subfolders under the package name
-@#    in which the type gets defined which are not part of the namespace
-@#  - get_include_directives (function)
-@#  - msg_type_to_idl (function)
-@###############################################
-@
+@# Included from rosidl_generator_dds_idl/resource/idl.idl.em
 @{
-from rosidl_generator_cpp import escape_string
-from rosidl_generator_dds_idl import MSG_TYPE_TO_IDL
-}@
-@
-#ifndef __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__idl__
-#define __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__idl__
+from rosidl_generator_dds_idl import idl_typename, idl_literal
 
-@#############################
-@# Include dependency messages
-@#############################
-@[  for line in get_include_directives(spec, [deps_subfolder] + subfolders)]@
-@(line)
-@[  end for]@
+from rosidl_parser.definition import Array
+from rosidl_parser.definition import BaseType
+from rosidl_parser.definition import BoundedSequence
+from rosidl_parser.definition import CONSTANT_MODULE_SUFFIX
+from rosidl_parser.definition import NestedType
+from rosidl_parser.definition import Sequence
 
-module @(spec.base_type.pkg_name)
-{
-
-module @(subfolder)
-{
-
-module dds_
-{
-
-@##################
-@# Define constants
-@##################
-@# Constants
-@[for constant in spec.constants]@
-  const @(MSG_TYPE_TO_IDL[constant.type]) @(spec.base_type.type)__@(constant.name) =
-@[  if constant.type == 'bool']@
-    @('TRUE' if constant.value else 'FALSE');
-@[  elif constant.type == 'char']@
-    '\@(constant.value)';
-@[  elif constant.type == 'int8']@
-    @(constant.value if constant.value >= 0 else (constant.value + 256));
-@[  elif constant.type == 'string']@
-    "@(escape_string(constant.value))";
-@[  else]@
-    @(constant.value);
-@[  end if]@
-@[end for]
-
-@{
-typedefs = set([])
-for field in spec.fields:
-  idl_typedef, idl_typedef_var, _ = msg_type_to_idl(field.type, deps_subfolder)
-  if idl_typedef and idl_typedef_var and (idl_typedef, idl_typedef_var) not in typedefs:
-    print('%s %s__%s__%s' % (idl_typedef, spec.base_type.pkg_name, spec.base_type.type, idl_typedef_var))
-    typedefs.add((idl_typedef, idl_typedef_var))
 }@
 
-@################################
-@# Message struct with all fields
-@################################
-struct @(spec.base_type.type)_
-{
+@[for ns in message.structure.type.namespaces]@
+module @(ns) {
 
-@[if spec.fields]@
-@[  for field in spec.fields]@
-@{    idl_typedef, idl_typedef_var, idl_type = msg_type_to_idl(field.type, deps_subfolder)}@
-@[    if idl_typedef and idl_typedef_var]@
-@(      spec.base_type.pkg_name)__@(spec.base_type.type)__@(idl_type) @(field.name)_;
-@[    else]@
-  @(idl_type) @(field.name)_;
-@[    end if]@
-@[  end for]@
-@[else]@
-  boolean _dummy;
+@[end for]@
+module dds_ {
+
+@[if message.constants]@
+module @(message.structure.type.name)@(CONSTANT_MODULE_SUFFIX) {
+@[  for constant in message.constants.values()]@
+const @(idl_typename(constant.type)) @(constant.name)_ = @(idl_literal(constant.type, constant.value));
+@[  end for]
+};
 @[end if]@
 
-};  // struct @(spec.base_type.type)_
+struct @(message.structure.type.name)_ {
+@[for member in message.structure.members]@
+@[  for value in member.get_annotation_values('key')]@
+@@key@
+@[    if value]@
+("@(value)")@
+@[    end if]
+@[  end for]@
+@[  if isinstance(member.type, NestedType)]@
+@[    if isinstance(member.type, Array)]@
+@(idl_typename(member.type.basetype)) @(member.name)_[@(member.type.size)];
+@[    elif isinstance(member.type, Sequence)]@
+sequence<@(idl_typename(member.type.basetype))@
+@[      if isinstance(member.type, BoundedSequence)]@
+, @(member.type.upper_bound)@
+@[      elif idl_typename(member.type.basetype).endswith('>')]@
+ @
+@[      end if]@
+> @(member.name)_;
+@[    else]@
 
-@[for line in get_post_struct_lines(spec)]@
+@[    end if]
+@[  elif isinstance(member.type, BaseType)]@
+@(idl_typename(member.type)) @(member.name)_;
+@[  else]@
+
+@[  end if]@
+@[end for]@
+
+};
+
+@[for line in get_post_struct_lines(message)]@
 @(line)
 @[end for]@
 
 };  // module dds_
 
-};  // module @(subfolder)
+@[for ns in reversed(message.structure.type.namespaces)]@
+};  // module @(ns)
 
-};  // module @(spec.base_type.pkg_name)
-
-#endif  // __@(spec.base_type.pkg_name)__@(subfolder)__@(spec.base_type.type)__idl__
+@[end for]@

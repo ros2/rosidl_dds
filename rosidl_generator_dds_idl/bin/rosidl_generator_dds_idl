@@ -11,6 +11,10 @@ def main(argv=sys.argv[1:]):
         description='Generate the DDS interfaces for ROS interfaces.',
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument(
+        '--additional-service-templates',
+        nargs='*',
+        help='Additional EmPy templates to evaluate when generating services')
+    parser.add_argument(
         '--generator-arguments-file',
         required=True,
         help='The location of the file containing the generator arguments')
@@ -28,7 +32,8 @@ def main(argv=sys.argv[1:]):
     return generate_dds_idl(
         args.generator_arguments_file,
         args.subfolders,
-        args.extension
+        args.extension,
+        args.additional_service_templates,
     )
 
 

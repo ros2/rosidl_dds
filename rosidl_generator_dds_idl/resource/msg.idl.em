@@ -2,30 +2,30 @@
 @{
 from rosidl_generator_dds_idl import idl_typename, idl_literal
 
+from rosidl_parser.definition import AbstractNestableType
+from rosidl_parser.definition import AbstractNestedType
+from rosidl_parser.definition import AbstractSequence
 from rosidl_parser.definition import Array
-from rosidl_parser.definition import BaseType
 from rosidl_parser.definition import BoundedSequence
 from rosidl_parser.definition import CONSTANT_MODULE_SUFFIX
-from rosidl_parser.definition import NestedType
-from rosidl_parser.definition import Sequence
 
 }@
 
-@[for ns in message.structure.type.namespaces]@
+@[for ns in message.structure.namespaced_type.namespaces]@
 module @(ns) {
 
 @[end for]@
 module dds_ {
 
 @[if message.constants]@
-module @(message.structure.type.name)@(CONSTANT_MODULE_SUFFIX) {
-@[  for constant in message.constants.values()]@
+module @(message.structure.namespaced_type.name)@(CONSTANT_MODULE_SUFFIX) {
+@[  for constant in message.constants]@
 const @(idl_typename(constant.type)) @(constant.name)_ = @(idl_literal(constant.type, constant.value));
 @[  end for]
 };
 @[end if]@
 
-struct @(message.structure.type.name)_ {
+struct @(message.structure.namespaced_type.name)_ {
 @[for member in message.structure.members]@
 @[  for value in member.get_annotation_values('key')]@
 @@key@
@@ -33,21 +33,21 @@ struct @(message.structure.type.name)_ {
 ("@(value)")@
 @[    end if]
 @[  end for]@
-@[  if isinstance(member.type, NestedType)]@
+@[  if isinstance(member.type, AbstractNestedType)]@
 @[    if isinstance(member.type, Array)]@
-@(idl_typename(member.type.basetype)) @(member.name)_[@(member.type.size)];
-@[    elif isinstance(member.type, Sequence)]@
-sequence<@(idl_typename(member.type.basetype))@
+@(idl_typename(member.type.value_type)) @(member.name)_[@(member.type.size)];
+@[    elif isinstance(member.type, AbstractSequence)]@
+sequence<@(idl_typename(member.type.value_type))@
 @[      if isinstance(member.type, BoundedSequence)]@
-, @(member.type.upper_bound)@
-@[      elif idl_typename(member.type.basetype).endswith('>')]@
+, @(member.type.maximum_size)@
+@[      elif idl_typename(member.type.value_type).endswith('>')]@
  @
 @[      end if]@
 > @(member.name)_;
 @[    else]@
 
 @[    end if]
-@[  elif isinstance(member.type, BaseType)]@
+@[  elif isinstance(member.type, AbstractNestableType)]@
 @(idl_typename(member.type)) @(member.name)_;
 @[  else]@
 
@@ -62,7 +62,7 @@ sequence<@(idl_typename(member.type.basetype))@
 
 };  // module dds_
 
-@[for ns in reversed(message.structure.type.namespaces)]@
+@[for ns in reversed(message.structure.namespaced_type.namespaces)]@
 };  // module @(ns)
 
 @[end for]@

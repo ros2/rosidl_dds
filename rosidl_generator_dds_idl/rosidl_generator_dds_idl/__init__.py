@@ -15,12 +15,12 @@
 import os
 
 from rosidl_cmake import generate_files
-from rosidl_parser.definition import BaseString
-from rosidl_parser.definition import BaseType
+from rosidl_parser.definition import AbstractGenericString
+from rosidl_parser.definition import AbstractNestableType
+from rosidl_parser.definition import AbstractString
+from rosidl_parser.definition import AbstractWString
 from rosidl_parser.definition import BasicType
 from rosidl_parser.definition import NamespacedType
-from rosidl_parser.definition import String
-from rosidl_parser.definition import WString
 
 
 def generate_dds_idl(
@@ -71,17 +71,17 @@ EXPLICIT_TYPE_TO_IMPLICIT_TYPE = {
 
 # used by the template
 def idl_typename(type_):
-    assert(isinstance(type_, BaseType))
+    assert(isinstance(type_, AbstractNestableType))
     if isinstance(type_, BasicType):
-        typename = EXPLICIT_TYPE_TO_IMPLICIT_TYPE.get(type_.type, type_.type)
-    elif isinstance(type_, BaseString):
-        if isinstance(type_, String):
+        typename = EXPLICIT_TYPE_TO_IMPLICIT_TYPE.get(type_.typename, type_.typename)
+    elif isinstance(type_, AbstractGenericString):
+        if isinstance(type_, AbstractString):
             typename = 'string'
-        elif isinstance(type_, WString):
+        elif isinstance(type_, AbstractWString):
             typename = 'wstring'
         else:
             assert False, 'Unknown string type'
-        if type_.maximum_size is not None:
+        if type_.has_maximum_size():
             typename += '<%d>' % (type_.maximum_size)
     elif isinstance(type_, NamespacedType):
         typename = '::'.join(type_.namespaces + ['dds_', type_.name + '_'])
@@ -92,21 +92,21 @@ def idl_typename(type_):
 
 # used by the template
 def idl_literal(type_, value):
-    assert(isinstance(type_, BaseType))
+    assert(isinstance(type_, AbstractNestableType))
     if isinstance(type_, BasicType):
-        if type_.type == 'boolean':
+        if type_.typename == 'boolean':
             literal = 'TRUE' if value else 'FALSE'
-        elif type_.type == 'char':
+        elif type_.typename == 'char':
             literal = '%s' % value
-        elif type_.type == 'int8':
+        elif type_.typename == 'int8':
             literal = '%d' % (value if value >= 0 else value + 256)
-        elif type_.type in ('float', 'double'):
+        elif type_.typename in ('float', 'double'):
             literal = '%f' % value
         else:
             literal = '%d' % value
-    elif isinstance(type_, String):
+    elif isinstance(type_, AbstractString):
         literal = '"%s"' % value
-    elif isinstance(type_, WString):
+    elif isinstance(type_, AbstractWString):
         literal = 'L"%s"' % value
     else:
         assert False, 'Unknown base type'

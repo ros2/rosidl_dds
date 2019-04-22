@@ -20,6 +20,7 @@ from rosidl_parser.definition import AbstractNestableType
 from rosidl_parser.definition import AbstractString
 from rosidl_parser.definition import AbstractWString
 from rosidl_parser.definition import BasicType
+from rosidl_parser.definition import FLOATING_POINT_TYPES
 from rosidl_parser.definition import NamespacedType
 
 
@@ -100,7 +101,7 @@ def idl_literal(type_, value):
             literal = '%s' % value
         elif type_.typename == 'int8':
             literal = '%d' % (value if value >= 0 else value + 256)
-        elif type_.typename in ('float', 'double'):
+        elif type_.typename in FLOATING_POINT_TYPES:
             literal = '%f' % value
         else:
             literal = '%d' % value

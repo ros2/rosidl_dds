@@ -43,7 +43,8 @@ for message in content.get_elements_of_type(Message):
     TEMPLATE(
         'msg.idl.em', package_name=package_name,
         interface_path=interface_path, message=message,
-        get_post_struct_lines=get_post_struct_lines
+        get_post_struct_lines=get_post_struct_lines,
+        idl_typename=idl_typename, idl_literal=idl_literal,
     )
 
 for service in content.get_elements_of_type(Service):
@@ -51,7 +52,8 @@ for service in content.get_elements_of_type(Service):
         'srv.idl.em', package_name=package_name,
         interface_path=interface_path, service=service,
         get_post_struct_lines=get_post_struct_lines,
-        additional_service_templates=additional_service_templates
+        idl_typename=idl_typename, idl_literal=idl_literal,
+        additional_service_templates=additional_service_templates,
     )
 
 for action in content.get_elements_of_type(Action):
@@ -59,7 +61,8 @@ for action in content.get_elements_of_type(Action):
         'action.idl.em', package_name=package_name,
         interface_path=interface_path, action=action,
         get_post_struct_lines=get_post_struct_lines,
-        additional_service_templates=additional_service_templates
+        idl_typename=idl_typename, idl_literal=idl_literal,
+        additional_service_templates=additional_service_templates,
     )
 }@
 

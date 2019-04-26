@@ -1,7 +1,5 @@
 @# Included from rosidl_generator_dds_idl/resource/idl.idl.em
 @{
-from rosidl_generator_dds_idl import idl_typename, idl_literal
-
 from rosidl_parser.definition import AbstractNestableType
 from rosidl_parser.definition import AbstractNestedType
 from rosidl_parser.definition import AbstractSequence

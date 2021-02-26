@@ -29,13 +29,13 @@ def main(argv=sys.argv[1:]):
         help='The Python module extending the generator')
     args = parser.parse_args(argv)
 
-    return generate_dds_idl(
+    generate_dds_idl(
         args.generator_arguments_file,
         args.subfolders,
         args.extension,
         args.additional_service_templates,
     )
-
+    return 0
 
 if __name__ == '__main__':
     sys.exit(main())

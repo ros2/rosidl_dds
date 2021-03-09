@@ -25,8 +25,6 @@ def test_idl2ddsidl_translation(tmp_path, capsys):
     # NOTE(hidmic): pytest and empy do not play along,
     # the latter expects some proxy will stay in sys.stdout
     # and the former insists in overwriting it
-    import sys
-    print(sys.path)
 
     with capsys.disabled():
         # Test .idl to _.idl translation

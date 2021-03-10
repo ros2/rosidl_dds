@@ -1,5 +1,5 @@
 // generated from rosidl_generator_dds_idl/resource/idl.idl.em
-// with input from @(package_name):@(interface_path)
+// with input from @(package_name):@(interface_path.as_posix())
 // generated code does not contain a copyright notice
 @{
 import os

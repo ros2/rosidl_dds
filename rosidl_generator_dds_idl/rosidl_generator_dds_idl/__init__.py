@@ -48,8 +48,7 @@ def generate_dds_idl(
                 if hasattr(module, entity_name):
                     additional_context[entity_name] = \
                         getattr(module, entity_name)
-    generate_files(generator_arguments_file, mapping, additional_context, keep_case=True)
-    return 0
+    return generate_files(generator_arguments_file, mapping, additional_context, keep_case=True)
 
 
 # used by the template

@@ -2,6 +2,11 @@
 Changelog for package rosidl_generator_dds_idl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.8.1 (2022-03-30)
+------------------
+* Add changelog (`#56 <https://github.com/ros2/rosidl_dds/issues/56>`_)
+* Contributors: Ivan Santiago Paunovic
+
 0.8.0 (2021-03-19)
 ------------------
 * Expose .idl to DDS .idl conversion via rosidl translate CLI. (`#55 <https://github.com/ros2/rosidl_dds/issues/55>`_)

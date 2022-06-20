@@ -21,6 +21,8 @@ from rosidl_parser.definition import AbstractString
 from rosidl_parser.definition import AbstractWString
 from rosidl_parser.definition import BasicType
 from rosidl_parser.definition import FLOATING_POINT_TYPES
+from rosidl_parser.definition import EnumerationType
+from rosidl_parser.definition import ENUM_MODULE_SUFFIX
 from rosidl_parser.definition import NamespacedType
 
 
@@ -85,6 +87,8 @@ def idl_typename(type_):
             typename += '<%d>' % (type_.maximum_size)
     elif isinstance(type_, NamespacedType):
         typename = '::'.join(type_.namespaces + ['dds_', type_.name + '_'])
+    elif isinstance(type_, EnumerationType):
+        typename = '::'.join([type_.namespaces[-1] + ENUM_MODULE_SUFFIX,  type_.name + '_'])
     else:
         assert False, 'Unknown base type'
     return typename

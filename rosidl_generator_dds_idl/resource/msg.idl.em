@@ -6,6 +6,7 @@ from rosidl_parser.definition import AbstractSequence
 from rosidl_parser.definition import Array
 from rosidl_parser.definition import BoundedSequence
 from rosidl_parser.definition import CONSTANT_MODULE_SUFFIX
+from rosidl_parser.definition import ENUM_MODULE_SUFFIX
 
 }@
 
@@ -19,6 +20,16 @@ module dds_ {
 module @(message.structure.namespaced_type.name)@(CONSTANT_MODULE_SUFFIX) {
 @[  for constant in message.constants]@
 const @(idl_typename(constant.type)) @(constant.name)_ = @(idl_literal(constant.type, constant.value));
+@[  end for]
+};
+@[end if]@
+
+@[if message.enumerations]@
+module @(message.structure.namespaced_type.name)@(ENUM_MODULE_SUFFIX) {
+@[  for enum in message.enumerations]@
+enum @(enum.enumeration_type.name)_ {
+@(',\n'.join(message.enumerations[0].enumerators))
+};
 @[  end for]
 };
 @[end if]@

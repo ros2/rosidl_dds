@@ -14,7 +14,6 @@
 
 import os
 
-from rosidl_cmake import generate_files
 from rosidl_parser.definition import AbstractGenericString
 from rosidl_parser.definition import AbstractNestableType
 from rosidl_parser.definition import AbstractString
@@ -22,6 +21,7 @@ from rosidl_parser.definition import AbstractWString
 from rosidl_parser.definition import BasicType
 from rosidl_parser.definition import FLOATING_POINT_TYPES
 from rosidl_parser.definition import NamespacedType
+from rosidl_pycommon import generate_files
 
 
 def generate_dds_idl(

@@ -29,7 +29,7 @@ from rosidl_parser.definition import Action
 from rosidl_parser.definition import Message
 from rosidl_parser.definition import Service
 
-from rosidl_cmake import convert_camel_case_to_lower_case_underscore
+from rosidl_pycommon import convert_camel_case_to_lower_case_underscore
 header_guard_parts = [package_name] + list(interface_path.parents[0].parts) + \
     [convert_camel_case_to_lower_case_underscore(interface_path.stem)] + \
     ['idl']

@@ -2,6 +2,11 @@
 Changelog for package rosidl_generator_dds_idl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Replace rosidl_cmake imports with rosidl_pycommon (`#59 <https://github.com/ros2/rosidl_dds/issues/59>`_)
+* Contributors: Jacob Perron
+
 0.9.0 (2022-05-04)
 ------------------
 

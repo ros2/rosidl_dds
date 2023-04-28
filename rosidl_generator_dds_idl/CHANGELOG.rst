@@ -2,6 +2,9 @@
 Changelog for package rosidl_generator_dds_idl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.11.0 (2023-04-28)
+-------------------
+
 0.10.1 (2023-02-13)
 -------------------
 * [rolling] Update maintainers - 2022-11-07 (`#60 <https://github.com/ros2/rosidl_dds/issues/60>`_)

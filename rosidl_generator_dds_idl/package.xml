@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>rosidl_generator_dds_idl</name>
-  <version>0.10.1</version>
+  <version>0.11.0</version>
   <description>Generate the DDS interfaces for ROS interfaces.</description>
 
   <maintainer email="sloretz@openrobotics.org">Shane Loretz</maintainer>

@@ -71,7 +71,7 @@ EXPLICIT_TYPE_TO_IMPLICIT_TYPE = {
 
 # used by the template
 def idl_typename(type_):
-    assert(isinstance(type_, AbstractNestableType))
+    assert isinstance(type_, AbstractNestableType)
     if isinstance(type_, BasicType):
         typename = EXPLICIT_TYPE_TO_IMPLICIT_TYPE.get(type_.typename, type_.typename)
     elif isinstance(type_, AbstractGenericString):
@@ -92,7 +92,7 @@ def idl_typename(type_):
 
 # used by the template
 def idl_literal(type_, value):
-    assert(isinstance(type_, AbstractNestableType))
+    assert isinstance(type_, AbstractNestableType)
     if isinstance(type_, BasicType):
         if type_.typename == 'boolean':
             literal = 'TRUE' if value else 'FALSE'

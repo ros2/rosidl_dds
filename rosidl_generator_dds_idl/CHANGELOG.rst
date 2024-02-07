@@ -2,6 +2,11 @@
 Changelog for package rosidl_generator_dds_idl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Remove unnecessary parentheses. (`#61 <https://github.com/ros2/rosidl_dds/issues/61>`_)
+* Contributors: Chris Lalancette
+
 0.11.0 (2023-04-28)
 -------------------
 

@@ -2,6 +2,9 @@
 Changelog for package rosidl_generator_dds_idl
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.13.0 (2025-04-28)
+-------------------
+
 0.12.1 (2025-04-28)
 -------------------
 * Update cmake version requirements (`#64 <https://github.com/ros2/rosidl_dds/issues/64>`_)
